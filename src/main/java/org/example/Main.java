@@ -9,68 +9,39 @@ import guru.nidi.graphviz.parse.Parser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import static guru.nidi.graphviz.model.Factory.mutNode;
+import static guru.nidi.graphviz.model.Factory.node;
+
 public class Main {
-
-    public static void parseGraph(String filePath) {
-        try {
-            File dot = new File(filePath);
-            MutableGraph g = null;
-            try {
-                g = new Parser().read(dot);
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                Graphviz.fromGraph(g).width(700).render(Format.PNG).toFile(new File("example/ex4-2.png"));
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        catch (Exception exc) {
-            exc.printStackTrace();
-        }
-    }
-
-    public static void outputGraph(String filePath) {
-        try {
-            File dot = new File(filePath);
-            MutableGraph g = null;
-            try {
-                g = new Parser().read(dot);
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            Set<String> nodeSet = new HashSet<>();
-
-            for (MutableNode node : g.nodes()) {
-                nodeSet.add(node.name().toString());
-            }
-
-            System.out.println("Node List: (" + nodeSet.size() + " nodes)");
-            for (String nodeName : nodeSet) {
-                System.out.println(nodeName);
-            }
-
-            System.out.println("Edge List: (" + g.edges().size() +" edges)");
-            for (Link edge : g.edges()) {
-                System.out.println(edge.name());
-            }
-
-        }
-        catch (Exception exc) {
-            exc.printStackTrace();
-        }
-    }
     public static void main(String[] args) {
-        System.out.println("Hello world!");
-        parseGraph("src/main/java/org/example/color.dot");
-        outputGraph("src/main/java/org/example/color.dot");
+        GraphManager graphManager = new GraphManager("src/main/java/org/example/color.dot");
+        // graphManager.addNode("Adam");
+        // graphManager.parseGraph();
+
+        /*
+        List<List<String>> edgeList = new ArrayList<>();
+        for(Integer i = 0; i < 1; i ++) {
+            List<String> edgeGroup = new ArrayList<>();
+            edgeGroup.add("Eve");
+            edgeGroup.add("Adam");
+
+            edgeList.add(edgeGroup);
+        }
+        graphManager.addEdges(edgeList);
+        */
+
+        graphManager.removeNode("white");
+
+        List<String> nodeNames = new ArrayList<>();
+        nodeNames.add("black");
+        nodeNames.add("white");
+        graphManager.removeNodes(nodeNames);
+        graphManager.parseGraph();
+        graphManager.outputGraph();
     }
 }
