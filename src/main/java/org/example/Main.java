@@ -24,13 +24,15 @@ public class Main {
 
         System.out.println(stars);
         System.out.println("Welcome!!!\nSelect 1 of the following options:");
-        System.out.println("\t1. Parse Graph from DOT file to image (PNG)");
+        System.out.println("\t1. Parse Graph from DOT file");
         System.out.println("\t2. Print nodes and edges of the graph");
         System.out.println("\t3. Add node(s) to the graph");
         System.out.println("\t4. Add edge(s) to the graph");
         System.out.println("\t5. Remove edge(s) from the graph");
         System.out.println("\t6. Remove node(s) from the graph");
-        System.out.println("\t7. Exit");
+        System.out.println("\t7. Output graph to DOT file");
+        System.out.println("\t8. Output graph to Image");
+        System.out.println("\t9. Exit");
     }
     public static void main(String[] args) {
         String resp = "";
@@ -56,7 +58,7 @@ public class Main {
             }
             switch (respInt) {
                 case 1: {
-                    graphManager.parseGraph();
+                    graphManager.parseGraph("png");
                     break;
                 }
                 case 2: {
@@ -75,7 +77,7 @@ public class Main {
                     }
 
                     graphManager.addNodes(nodeNames);
-                    graphManager.parseGraph();
+                    graphManager.parseGraph("png");
                     System.out.println("The requested nodes have been added. Check out the example/ex4-2.png file");
                     break;
                 }
@@ -101,7 +103,7 @@ public class Main {
                     }
 
                     graphManager.addEdges(edgeList);
-                    graphManager.parseGraph();
+                    graphManager.parseGraph("png");
                     System.out.println("The requested edge(s) have been added. Check out the example/ex4-2.png file");
                     break;
                 }
@@ -124,7 +126,7 @@ public class Main {
                     }
 
                     graphManager.removeEdges(strEdgeList);
-                    graphManager.parseGraph();
+                    graphManager.parseGraph("png");
                     System.out.println("The requested edge(s) have been deleted. Check out the example/ex4-2.png file");
                     break;
                 }
@@ -140,13 +142,23 @@ public class Main {
                     }
 
                     graphManager.removeNodes(nodeNames);
-                    graphManager.parseGraph();
+                    graphManager.parseGraph("png");
                     System.out.println("The requested node(s) have been deleted. Check out the example/ex4-2.png file");
+                    break;
+                }
+                case 7: {
+                    graphManager.outputToDot();
+                    break;
+                }
+                case 8: {
+                    System.out.print("Enter the intended image format (png/jpg): ");
+                    String fileType = sc.nextLine();
+                    graphManager.parseGraph(fileType);
                     break;
                 }
                 default:
                     break;
             }
-        }while(!resp.equals("7"));
+        }while(!resp.equals("9"));
     }
 }

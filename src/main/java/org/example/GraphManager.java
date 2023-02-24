@@ -1,5 +1,7 @@
 package org.example;
 
+import java.awt.image.BufferedImage;
+import java.io.FileWriter;
 import java.util.*;
 
 import guru.nidi.graphviz.engine.Format;
@@ -8,6 +10,10 @@ import guru.nidi.graphviz.model.Link;
 import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
 import guru.nidi.graphviz.parse.Parser;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 
 import static guru.nidi.graphviz.model.Factory.mutGraph;
 import static guru.nidi.graphviz.model.Factory.mutNode;
@@ -21,7 +27,7 @@ public class GraphManager {
 
     public GraphManager() {
         this.graph = mutGraph();
-        this.dotFilePath = null;
+        this.dotFilePath = "";
     }
 
     public GraphManager(String dotFilePath) {
@@ -29,6 +35,10 @@ public class GraphManager {
         this.dotFilePath = dotFilePath;
     }
 
+    /**
+     * Determines whether the current graph is directed or not
+     * @return Boolean
+     */
     public Boolean isDirected() {
         return (this.graph == null || this.dotFilePath == null ) ? false : this.graph.isDirected();
     }
@@ -51,9 +61,19 @@ public class GraphManager {
      * @return void
      */
     public void initGraph() {
-        System.out.println("Graph hasn't been initialized. Please provide the filepath of the dot file that contains the graph config:");
+
+        System.out.println("Default filepath of the dot file is 'src/main/java/org/example/color.dot'.");
+        System.out.print("Do you want to continue with the default dot file? (Enter y/n): ");
         Scanner sc = new Scanner(System.in);
-        this.dotFilePath = sc.nextLine();
+        String resp = sc.nextLine();
+
+        if(resp.equals("y") || resp.equals("Y")) {
+            this.dotFilePath = "src/main/java/org/example/color.dot";
+        }
+        else {
+            System.out.println("Please provide the filepath of the dot file that contains the graph config: ");
+            this.dotFilePath = sc.nextLine();
+        }
         this.getGraph(this.dotFilePath);
     }
 
@@ -61,14 +81,15 @@ public class GraphManager {
      * Exports the graph to a PNG image
      * @return void
      */
-    public void parseGraph() {
-        if(this.graph == null || this.dotFilePath == null) {
-            System.out.println("this.graph is null (parseGraph)");
-            this.initGraph();
-        }
-
+    public void parseGraph(String fileType) {
         try {
-            Graphviz.fromGraph(this.graph).width(700).render(Format.PNG).toFile(new File("example/ex4-2.png"));
+            if(fileType.toLowerCase().equals("png")) {
+                Graphviz.fromGraph(this.graph).width(700).render(Format.PNG).toFile(new File("example/ex4-2.png"));
+            }
+            else if(fileType.toLowerCase().equals("jpg") || fileType.toLowerCase().equals("jpeg")) {
+                String outputFile = "example/ex4-1." + fileType;
+                Graphviz.fromGraph(this.graph).width(700).render(Format.PNG).toFile(new File(outputFile));
+            }
         }
         catch (IOException e) {
             throw new RuntimeException(e);
@@ -191,7 +212,21 @@ public class GraphManager {
             MutableNode node1 = nameToNodeMap.get(edgeGroups.get(0));
             MutableNode node2 = nameToNodeMap.get(edgeGroups.get(1));
 
-            node1.addLink(node2);
+            Boolean isDuplicate = false;
+            for(Link link : node1.links()) {
+                List<String> linkSplit = List.of(link.name().toString().split("--"));
+                if(linkSplit.get(0).equals(node2.name().toString()) || linkSplit.get(1).equals(node2.name().toString())) {
+                    isDuplicate = true;
+                }
+            }
+
+            if(!isDuplicate) {
+                node1.addLink(node2);
+            }
+            else {
+                String connector = (this.graph.isDirected()) ? "-->" : "--";
+                System.out.println(node1.name() + connector + node2.name() + " is already present in the graph.");
+            }
         }
     }
 
@@ -348,6 +383,27 @@ public class GraphManager {
         }
         catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Outputs the graph to a DOT file
+     * @return void
+     */
+    public void outputToDot() {
+        if(this.graph == null) {
+            System.out.println("Graph hasn't been initialized");
+        }
+
+        try {
+            FileWriter dotWriter = new FileWriter("example/output.dot");
+            dotWriter.write(this.graph.toString());
+            dotWriter.close();
+            System.out.println("Graph has been exported to 'src/main/java/org/example/output.dot'");
+        }
+        catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
         }
     }
 }
