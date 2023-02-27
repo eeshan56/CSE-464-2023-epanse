@@ -58,7 +58,7 @@ public class Main {
             }
             switch (respInt) {
                 case 1: {
-                    graphManager.parseGraph("png");
+                    graphManager.initGraph();
                     break;
                 }
                 case 2: {
@@ -147,7 +147,12 @@ public class Main {
                     break;
                 }
                 case 7: {
-                    graphManager.outputToDot();
+                    try {
+                        graphManager.outputToDot();
+                    }
+                    catch (IOException exc) {
+                        System.out.println("Please retry operation...");
+                    }
                     break;
                 }
                 case 8: {

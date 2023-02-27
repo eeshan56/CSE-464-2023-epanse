@@ -116,10 +116,7 @@ public class GraphManager {
             System.out.println(nodeName);
         }
 
-        System.out.println("Edge List: (" + this.graph.edges().size() +" edges)");
-        for (Link edge : this.graph.edges()) {
-            System.out.println(edge.name());
-        }
+        this.getEdgeList();
     }
 
     /**
@@ -133,10 +130,10 @@ public class GraphManager {
         }
 
         Set<String> nodeSet = new HashSet<>();
-        boolean isDuplicate = true;
+        boolean isDuplicate = false;
         for (MutableNode node : this.graph.nodes()) {
             nodeSet.add(node.name().toString());
-            isDuplicate = isDuplicate & (node.name().toString().equals(nodeName));
+            isDuplicate = node.name().toString().equals(nodeName);
         }
 
         if(isDuplicate) {
@@ -390,7 +387,7 @@ public class GraphManager {
      * Outputs the graph to a DOT file
      * @return void
      */
-    public void outputToDot() {
+    public void outputToDot() throws IOException {
         if(this.graph == null) {
             System.out.println("Graph hasn't been initialized");
         }
@@ -404,6 +401,36 @@ public class GraphManager {
         catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
+            throw new IOException(e);
         }
+    }
+
+    public List<MutableNode> getNodeSet() {
+        if(this.graph == null) {
+            return List.of();
+        }
+
+        Map<String, MutableNode> nodeMap = new HashMap<>();
+        for (MutableNode node : this.graph.nodes()) {
+            if(!nodeMap.containsKey(node.name().toString())) {
+                nodeMap.put(node.name().toString(), node);
+            }
+        }
+
+        List<MutableNode> nodeList = new ArrayList<>(nodeMap.values());
+        return nodeList;
+    }
+
+    public ArrayList<Link> getEdgeList() {
+        System.out.println("Edge List: (" + this.graph.edges().size() +" edges)");
+        for (Link edge : this.graph.edges()) {
+            System.out.println(edge.name());
+        }
+
+        return new ArrayList<>(this.graph.edges());
+    }
+
+    public String getDotFilePath() {
+        return this.dotFilePath;
     }
 }
