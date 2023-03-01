@@ -1,5 +1,6 @@
 # CSE-464-2023-epanse
 
-Commands to run the code:
+Command to download the code:
 $ git clone https://github.com/eeshan56/CSE-464-2023-epanse
-$ java CSE-464-2023-epanse/src/main/java/org/example/Main.java
+
+After this, open the Project folder "CSE-464-2023-epanse" in IntelliJ. Run Main.java that is present in src/main/java/org/example/ folder
