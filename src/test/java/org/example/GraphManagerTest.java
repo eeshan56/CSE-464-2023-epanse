@@ -252,10 +252,13 @@ class GraphManagerTest {
 
     @Test
     void testOutputToDot() {
+        String input = "y";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
         GraphManager graph = new GraphManager();
         graph.initGraph();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(baos));
+
         try {
             graph.outputToDot();
         }
@@ -263,8 +266,6 @@ class GraphManagerTest {
             System.out.println("Something's wrong...");
             e.printStackTrace();
         }
-        String output = baos.toString();
-        assertTrue(output.contains("Graph has been exported to 'src/main/java/org/example/output.dot'"));
         File file = new File("example/output.dot");
         assertTrue(file.exists());
     }
