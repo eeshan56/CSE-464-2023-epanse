@@ -74,7 +74,7 @@ class GraphManagerTest {
 
         GraphManager graphManager = new GraphManager();
         graphManager.initGraph();
-        assertEquals("src/main/java/org/example/color.dot", graphManager.getDotFilePath());
+        assertEquals("src/main/javacode/org/example/color.dot", graphManager.getDotFilePath());
     }
 
     @Test

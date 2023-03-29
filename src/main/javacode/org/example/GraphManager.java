@@ -412,20 +412,37 @@ public class GraphManager {
      * @param dst destination node
      * @return A path instance that shows the path traversed to reach destination node
      */
-    public Path GraphSearch(MutableNode src, MutableNode dst) {
+    public Path GraphSearch(MutableNode src, MutableNode dst, String algo) {
         List<MutableNode> nodeList = this.getNodeSet();
         // Map<String, List<String>> neighborMap = createNeighborMap();
 
+        Queue<List<MutableNode>> queue = new LinkedList<>();
         Stack<List<MutableNode>> stack = new Stack<>();
+
         Set<String> visited = new HashSet<>();
 
         List<MutableNode> path = new ArrayList<>();
         path.add(src);
-        stack.push(path);
 
-        while (!stack.isEmpty()) {
+        if(algo.equals("bfs")) {
+            queue.add(path);
+        }
+        else {
+            stack.push(path);
+        }
+
+        Boolean datastructureEmpty = false;
+        while (!datastructureEmpty) {
 //            this.displayQueue(queue);
-            List<MutableNode> currentPath = stack.pop();
+            List<MutableNode> currentPath = new ArrayList<>();
+
+            if(algo.equals("bfs")) {
+                currentPath = queue.remove();
+            }
+            else {
+                currentPath = stack.pop();
+            }
+
             MutableNode currentNode = currentPath.get(currentPath.size() - 1);
             if (currentNode.name().toString().equals(dst.name().toString())) {
                 Path result = new Path();
@@ -455,8 +472,20 @@ public class GraphManager {
 
                     LinkTarget toNode = neighbor.to();
                     newPath.add((MutableNode) toNode.asLinkSource());
-                    stack.push(newPath);
+                    if(algo.equals("bfs")) {
+                        queue.add(newPath);
+                    }
+                    else {
+                        stack.push(newPath);
+                    }
                 }
+            }
+
+            if(algo.equals("bfs")) {
+                datastructureEmpty = queue.isEmpty();
+            }
+            else {
+                datastructureEmpty = stack.isEmpty();
             }
         }
 
