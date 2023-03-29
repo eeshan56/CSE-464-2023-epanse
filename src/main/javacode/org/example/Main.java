@@ -192,7 +192,12 @@ public class Main {
                     }
 
                     Path path = graphManager.GraphSearch(srcNode, dstNode);
-                    System.out.println("path = " + path.getPath());
+                    if(path != null) {
+                        System.out.println("path = " + path.getPath());
+                    }
+                    else {
+                        System.out.println("Path not found...");
+                    }
 
                     break;
                 }
