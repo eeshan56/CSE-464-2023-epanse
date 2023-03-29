@@ -204,7 +204,7 @@ public class Main {
                         break;
                     }
 
-                    Path path = graphManager.GraphSearch(srcNode, dstNode, algo);
+                    Path path = graphManager.GraphSearch(srcNode, dstNode, algo.toLowerCase());
                     if(path != null) {
                         System.out.println("path = " + path.getPath());
                     }
