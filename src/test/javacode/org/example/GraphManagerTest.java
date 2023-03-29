@@ -17,11 +17,11 @@ class GraphManagerTest {
         Boolean result = graphManager.isDirected();
         assertEquals(false, result);
 
-        graphManager = new GraphManager("src/main/java/org/example/color.dot");
+        graphManager = new GraphManager("src/main/javacode/org/example/color.dot");
         result = graphManager.isDirected();
         assertEquals(true, result);
 
-        graphManager = new GraphManager("src/main/java/org/example/undirectedColor.dot");
+        graphManager = new GraphManager("src/main/javacode/org/example/undirectedColor.dot");
         result = graphManager.isDirected();
         assertEquals(false, result);
     }
@@ -29,7 +29,7 @@ class GraphManagerTest {
     @Test
     void testGetGraph() {
         GraphManager graphManager = new GraphManager();
-        graphManager.getGraph("src/main/java/org/example/color.dot");
+        graphManager.getGraph("src/main/javacode/org/example/color.dot");
 
         List<String> nodeNames = List.of("white", "cyan", "pink", "yellow", "blue", "green", "red", "black");
         List<MutableNode> nodeList = graphManager.getNodeSet();
@@ -74,18 +74,18 @@ class GraphManagerTest {
 
         GraphManager graphManager = new GraphManager();
         graphManager.initGraph();
-        assertEquals("src/main/java/org/example/color.dot", graphManager.getDotFilePath());
+        assertEquals("src/main/javacode/org/example/color.dot", graphManager.getDotFilePath());
     }
 
     @Test
     public void testInitGraphWithCustomFilePath() {
-        String input = "n\nsrc/main/java/org/example/undirectedColor.dot";
+        String input = "n\nsrc/main/javacode/org/example/undirectedColor.dot";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
 
         GraphManager graphManager = new GraphManager();
         graphManager.initGraph();
-        assertEquals("src/main/java/org/example/undirectedColor.dot", graphManager.getDotFilePath());
+        assertEquals("src/main/javacode/org/example/undirectedColor.dot", graphManager.getDotFilePath());
     }
     @Test
     public void testParseGraphWithPNG() {
