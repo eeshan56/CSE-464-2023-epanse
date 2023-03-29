@@ -32,7 +32,7 @@ public class Main {
         System.out.println("\t6. Remove node(s) from the graph");
         System.out.println("\t7. Output graph to DOT file");
         System.out.println("\t8. Output graph to Image");
-        System.out.println("\t9. BFS");
+        System.out.println("\t9. BFS/DFS");
         System.out.println("\t10. Exit");
     }
     public static void main(String[] args) {
@@ -164,6 +164,19 @@ public class Main {
                     break;
                 }
                 case 9: {
+                    String algo = "";
+                    Boolean valid = false;
+                    while(!valid) {
+                        try {
+                            System.out.print("Enter the search algorithm(BFS/DFS): ");
+                            algo = sc.nextLine();
+                            valid = (algo.toLowerCase().equals("bfs") || algo.toLowerCase().equals("dfs"));
+                        }
+                        catch (Exception e) {
+                            valid = false;
+                        }
+                    }
+
                     System.out.print("Enter the source node name: ");
                     String src = sc.nextLine();
 
@@ -191,7 +204,7 @@ public class Main {
                         break;
                     }
 
-                    Path path = graphManager.GraphSearch(srcNode, dstNode);
+                    Path path = graphManager.GraphSearch(srcNode, dstNode, algo);
                     if(path != null) {
                         System.out.println("path = " + path.getPath());
                     }
