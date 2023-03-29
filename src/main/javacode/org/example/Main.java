@@ -1,4 +1,4 @@
-package org.example;
+package javacode.org.example;
 
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
@@ -32,7 +32,8 @@ public class Main {
         System.out.println("\t6. Remove node(s) from the graph");
         System.out.println("\t7. Output graph to DOT file");
         System.out.println("\t8. Output graph to Image");
-        System.out.println("\t9. Exit");
+        System.out.println("\t9. BFS");
+        System.out.println("\t10. Exit");
     }
     public static void main(String[] args) {
         String resp = "";
@@ -63,6 +64,7 @@ public class Main {
                 }
                 case 2: {
                     graphManager.outputGraph();
+
                     break;
                 }
                 case 3: {
@@ -161,9 +163,42 @@ public class Main {
                     graphManager.parseGraph(fileType);
                     break;
                 }
+                case 9: {
+                    System.out.print("Enter the source node name: ");
+                    String src = sc.nextLine();
+
+                    System.out.print("Enter the destination node name: ");
+                    String dst = sc.nextLine();
+
+                    List<MutableNode> nodeList = graphManager.getNodeSet();
+                    Boolean srcExists = false;
+
+                    MutableNode srcNode = mutNode(src);
+                    MutableNode dstNode = mutNode(dst);
+
+                    for(MutableNode node : nodeList) {
+                        if(node.name().toString().equals(src)) {
+                            srcExists = true;
+                            srcNode = node;
+                        }
+                        if(node.name().toString().equals(dst)) {
+                            dstNode = node;
+                        }
+                    }
+
+                    if(!srcExists) {
+                        System.out.println("The entered source node is not present in the graph");
+                        break;
+                    }
+
+                    Path path = graphManager.GraphSearch(srcNode, dstNode);
+                    System.out.println("path = " + path.getPath());
+
+                    break;
+                }
                 default:
                     break;
             }
-        }while(!resp.equals("9"));
+        }while(!resp.equals("10"));
     }
 }

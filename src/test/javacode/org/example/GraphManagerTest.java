@@ -1,4 +1,4 @@
-package org.example;
+package javacode.org.example;
 
 import guru.nidi.graphviz.model.Link;
 import guru.nidi.graphviz.model.MutableNode;

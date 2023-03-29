@@ -1,4 +1,4 @@
-package org.example;
+package javacode.org.example;
 
 import java.awt.image.BufferedImage;
 import java.io.FileWriter;
@@ -6,9 +6,7 @@ import java.util.*;
 
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
-import guru.nidi.graphviz.model.Link;
-import guru.nidi.graphviz.model.MutableGraph;
-import guru.nidi.graphviz.model.MutableNode;
+import guru.nidi.graphviz.model.*;
 import guru.nidi.graphviz.parse.Parser;
 
 import javax.imageio.ImageIO;
@@ -62,13 +60,13 @@ public class GraphManager {
      */
     public void initGraph() {
 
-        System.out.println("Default filepath of the dot file is 'src/main/java/org/example/color.dot'.");
+        System.out.println("Default filepath of the dot file is 'src/main/javacode/org/example/color.dot'.");
         System.out.print("Do you want to continue with the default dot file? (Enter y/n): ");
         Scanner sc = new Scanner(System.in);
         String resp = sc.nextLine();
 
         if(resp.equals("y") || resp.equals("Y")) {
-            this.dotFilePath = "src/main/java/org/example/color.dot";
+            this.dotFilePath = "src/main/javacode/org/example/color.dot";
         }
         else {
             System.out.println("Please provide the filepath of the dot file that contains the graph config: ");
@@ -396,7 +394,7 @@ public class GraphManager {
             FileWriter dotWriter = new FileWriter("example/output.dot");
             dotWriter.write(this.graph.toString());
             dotWriter.close();
-            System.out.println("Graph has been exported to 'src/main/java/org/example/output.dot'");
+            System.out.println("Graph has been exported to 'src/main/javacode/org/example/output.dot'");
         }
         catch (IOException e) {
             System.out.println("An error occurred.");
@@ -404,6 +402,124 @@ public class GraphManager {
             throw new IOException(e);
         }
     }
+
+    /**
+     * BFS: Breadth First Search
+     * @param src source node
+     * @param dst destination node
+     * @return A path instance that shows the path traversed to reach destination node
+     */
+    public Path GraphSearch(MutableNode src, MutableNode dst) {
+        List<MutableNode> nodeList = this.getNodeSet();
+        // Map<String, List<String>> neighborMap = createNeighborMap();
+
+        Queue<List<MutableNode>> queue = new LinkedList<>();
+        Set<String> visited = new HashSet<>();
+
+        List<MutableNode> path = new ArrayList<>();
+        path.add(src);
+        queue.add(path);
+
+        while (!queue.isEmpty()) {
+//            this.displayQueue(queue);
+            List<MutableNode> currentPath = queue.remove();
+            MutableNode currentNode = currentPath.get(currentPath.size() - 1);
+            if (currentNode.name().toString().equals(dst.name().toString())) {
+                Path result = new Path();
+                for (MutableNode node : currentPath) {
+                    result.addToPath(node);
+                }
+                return result;
+            }
+
+            visited.add(currentNode.name().toString());
+//            List<String> neighborNodes = neighborMap.get(currentNode.name().toString());
+//            List<MutableNode> neighNodes = new ArrayList<>();
+//
+//            for(MutableNode node : nodeList) {
+//                if(!neighborNodes.contains(node.name().toString())) {
+//                    System.out.println(node.name().toString());
+//                    neighNodes.add(node);
+//                }
+//            }
+
+            Collection<Link> neighNodes = currentNode.links();
+
+            for (Link neighbor : neighNodes) {
+
+                if (!visited.contains(neighbor.to().name().toString())) {
+                    List<MutableNode> newPath = new ArrayList<>(currentPath);
+
+                    LinkTarget toNode = neighbor.to();
+                    newPath.add((MutableNode) toNode.asLinkSource());
+                    queue.add(newPath);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public void displayQueue(Queue<List<MutableNode>> queue) {
+        Queue<List<MutableNode>> queueCopy = new LinkedList<>(queue);
+        while(!queueCopy.isEmpty()) {
+            System.out.println(queueCopy.remove());
+        }
+    }
+
+//    private Map<String, List<String>> createNeighborMap() {
+//        Map<String, List<String>> neighborMap = new HashMap<>();
+//        for (MutableNode currNode : this.graph.nodes()) {
+//            for (Link edge : currNode.links()) {
+//                List<String> edgeNodes = List.of(edge.toString().split("--"));
+//                if (this.graph.isDirected()) {
+//                    List<String> corrEdges;
+//                    if (!neighborMap.containsKey(currNode.name().toString())) {
+//                        corrEdges = new ArrayList<>();
+//                    } else {
+//                        corrEdges = neighborMap.get(currNode.name().toString());
+//                    }
+//
+//                    if (edgeNodes.get(0).equals(currNode.name().toString())) {
+//                        corrEdges.add(edgeNodes.get(1));
+//                    } else {
+//                        corrEdges.add(edgeNodes.get(0));
+//                    }
+//
+//                    neighborMap.put(currNode.name().toString(), corrEdges);
+//                }
+//                else {
+//                    Integer currInd = 0;
+//                    if (!edgeNodes.get(0).equals(currNode.name().toString())) {
+//                        currInd = 1;
+//                    }
+//                    Integer newInd = (currInd == 0) ? 1 : 0;
+//
+//                    List<String> corrEdges1;
+//                    List<String> corrEdges2;
+//
+//                    if (!neighborMap.containsKey(currNode.name().toString())) {
+//                        corrEdges1 = new ArrayList<>();
+//                    } else {
+//                        corrEdges1 = neighborMap.get(currNode.name().toString());
+//                    }
+//
+//                    if (!neighborMap.containsKey(edgeNodes.get(newInd))) {
+//                        corrEdges2 = new ArrayList<>();
+//                    } else {
+//                        corrEdges2 = neighborMap.get(edgeNodes.get(newInd));
+//                    }
+//
+//                    corrEdges1.add(edgeNodes.get(newInd));
+//                    corrEdges2.add(edgeNodes.get(currInd));
+//
+//                    neighborMap.put(currNode.name().toString(), corrEdges1);
+//                    neighborMap.put(edgeNodes.get(newInd), corrEdges2);
+//                }
+//            }
+//        }
+//        return neighborMap;
+//    }
 
     public List<MutableNode> getNodeSet() {
         if(this.graph == null) {
@@ -429,6 +545,8 @@ public class GraphManager {
 
         return new ArrayList<>(this.graph.edges());
     }
+
+
 
     public String getDotFilePath() {
         return this.dotFilePath;
