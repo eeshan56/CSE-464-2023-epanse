@@ -60,13 +60,13 @@ public class GraphManager {
      */
     public void initGraph() {
 
-        System.out.println("Default filepath of the dot file is 'src/main/javacode/org/example/color.dot'.");
+        System.out.println("Default filepath of the dot file is 'src/main/java/org/example/color.dot'.");
         System.out.print("Do you want to continue with the default dot file? (Enter y/n): ");
         Scanner sc = new Scanner(System.in);
         String resp = sc.nextLine();
 
         if(resp.equals("y") || resp.equals("Y")) {
-            this.dotFilePath = "src/main/javacode/org/example/color.dot";
+            this.dotFilePath = "src/main/java/org/example/color.dot";
         }
         else {
             System.out.println("Please provide the filepath of the dot file that contains the graph config: ");
@@ -394,7 +394,7 @@ public class GraphManager {
             FileWriter dotWriter = new FileWriter("example/output.dot");
             dotWriter.write(this.graph.toString());
             dotWriter.close();
-            System.out.println("Graph has been exported to 'src/main/javacode/org/example/output.dot'");
+            System.out.println("Graph has been exported to 'example/output.dot'");
         }
         catch (IOException e) {
             System.out.println("An error occurred.");
