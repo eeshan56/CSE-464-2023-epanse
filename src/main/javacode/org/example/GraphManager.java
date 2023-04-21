@@ -120,9 +120,7 @@ public class GraphManager {
      * @return void
      */
     public void outputGraph() {
-        if(this.graph == null || this.dotFilePath == null) {
-            this.initGraph();
-        }
+        this.checkIfGraphIsNull();
 
         Set<String> nodeSet = new HashSet<>();
 
@@ -144,9 +142,7 @@ public class GraphManager {
      * @return void
      */
     public int addNode(String nodeName) {
-        if(this.graph == null || this.dotFilePath == null) {
-            this.initGraph();
-        }
+        this.checkIfGraphIsNull();
 
         Set<String> nodeSet = new HashSet<>();
         boolean isDuplicate = false;
@@ -170,9 +166,7 @@ public class GraphManager {
      * @return void
      */
     public void addEdges(List<List<String>> edgeList) {
-        if(this.graph == null || this.dotFilePath == null) {
-            this.initGraph();
-        }
+        this.checkIfGraphIsNull();
 
         Map<String, MutableNode> nameToNodeMap = new HashMap<>();
         for(MutableNode currNode : this.graph.nodes()) {
@@ -480,13 +474,6 @@ public class GraphManager {
         return null;
     }
 
-    public void displayQueue(Queue<List<MutableNode>> queue) {
-        Queue<List<MutableNode>> queueCopy = new LinkedList<>(queue);
-        while(!queueCopy.isEmpty()) {
-            System.out.println(queueCopy.remove());
-        }
-    }
-
     public List<MutableNode> getNodeSet() {
         if(this.graph == null) {
             return List.of();
@@ -512,9 +499,13 @@ public class GraphManager {
         return new ArrayList<>(this.graph.edges());
     }
 
-
-
     public String getDotFilePath() {
         return this.dotFilePath;
+    }
+
+    public void checkIfGraphIsNull() {
+        if(this.graph == null || this.dotFilePath == null) {
+            this.initGraph();
+        }
     }
 }
