@@ -160,7 +160,6 @@ public class GraphManager {
             return 1;
         }
 
-        // MutableNode node1 = (MutableNode) this.graph.add().asLinkSource();
         this.graph.add(mutNode(nodeName).asLinkSource());
         return 0;
     }
@@ -181,7 +180,7 @@ public class GraphManager {
                 nameToNodeMap.put(String.valueOf(node.name()), node);
             }
         }
-        // System.out.println("nodeMap = " + nameToNodeMap);
+
         Scanner sc = new Scanner(System.in);
 
         for (List<String> edgeGroups : edgeList) {
@@ -420,7 +419,6 @@ public class GraphManager {
      */
     public Path GraphSearch(MutableNode src, MutableNode dst, String algo) {
         List<MutableNode> nodeList = this.getNodeSet();
-        // Map<String, List<String>> neighborMap = createNeighborMap();
 
         Queue<List<MutableNode>> queue = new LinkedList<>();
         Stack<List<MutableNode>> stack = new Stack<>();
@@ -439,7 +437,6 @@ public class GraphManager {
 
         Boolean datastructureEmpty = false;
         while (!datastructureEmpty) {
-//            this.displayQueue(queue);
             List<MutableNode> currentPath = new ArrayList<>();
 
             if(algo.equals(BFS_STR)) {

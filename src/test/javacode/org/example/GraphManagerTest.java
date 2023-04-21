@@ -266,7 +266,7 @@ class GraphManagerTest {
             System.out.println("Something's wrong...");
             e.printStackTrace();
         }
-        File file = new File(GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_OUTPUT_DOT_FILEPATH);
+        File file = new File(GraphManager.DEFAULT_OUTPUT_DOT_FILEPATH);
         assertTrue(file.exists());
     }
 }

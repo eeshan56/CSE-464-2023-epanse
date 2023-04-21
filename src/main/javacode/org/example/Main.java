@@ -36,8 +36,11 @@ public class Main {
         System.out.println("\t10. Exit");
     }
     public static void main(String[] args) {
+
         String resp = "";
         GraphManager graphManager = new GraphManager();
+
+        String defaultPngFilename = graphManager.isDirected() ? GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_DIRECTED_FILENAME + "." + GraphManager.PNG_STR : GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_UNDIRECTED_FILENAME + "." + GraphManager.PNG_STR;
 
         List<String> nodeNames;
         List<List<String>> edgeList;
@@ -82,7 +85,6 @@ public class Main {
 
                     if(nodeLen > invalidCount) {
                         graphManager.parseGraph(GraphManager.PNG_STR);
-                        String defaultPngFilename = graphManager.isDirected() ? GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_DIRECTED_FILENAME + "." + GraphManager.PNG_STR : GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_UNDIRECTED_FILENAME + "." + GraphManager.PNG_STR;
                         System.out.println("The requested node(s) have been deleted. Check out the '" + defaultPngFilename + "' file");
                     }
                     break;
@@ -110,7 +112,6 @@ public class Main {
 
                     graphManager.addEdges(edgeList);
                     graphManager.parseGraph(GraphManager.PNG_STR);
-                    String defaultPngFilename = graphManager.isDirected() ? GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_DIRECTED_FILENAME + "." + GraphManager.PNG_STR : GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_UNDIRECTED_FILENAME + "." + GraphManager.PNG_STR;
                     System.out.println("The requested node(s) have been deleted. Check out the '" + defaultPngFilename + "' file");
                     break;
                 }
@@ -134,7 +135,6 @@ public class Main {
 
                     graphManager.removeEdges(strEdgeList);
                     graphManager.parseGraph(GraphManager.PNG_STR);
-                    String defaultPngFilename = graphManager.isDirected() ? GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_DIRECTED_FILENAME + "." + GraphManager.PNG_STR : GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_UNDIRECTED_FILENAME + "." + GraphManager.PNG_STR;
                     System.out.println("The requested node(s) have been deleted. Check out the '" + defaultPngFilename + "' file");
                     break;
                 }
@@ -151,7 +151,7 @@ public class Main {
 
                     graphManager.removeNodes(nodeNames);
                     graphManager.parseGraph(GraphManager.PNG_STR);
-                    String defaultPngFilename = graphManager.isDirected() ? GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_DIRECTED_FILENAME + "." + GraphManager.PNG_STR : GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_UNDIRECTED_FILENAME + "." + GraphManager.PNG_STR;
+
                     System.out.println("The requested node(s) have been deleted. Check out the '" + defaultPngFilename + "' file");
                     break;
                 }
