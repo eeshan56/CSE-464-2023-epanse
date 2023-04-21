@@ -1,5 +1,6 @@
 package javacode.org.example;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileWriter;
 import java.util.*;
@@ -18,6 +19,7 @@ import static guru.nidi.graphviz.model.Factory.mutNode;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class GraphManager {
     private MutableGraph graph = null;
@@ -81,12 +83,15 @@ public class GraphManager {
      */
     public void parseGraph(String fileType) {
         try {
-            if(fileType.toLowerCase().equals("png")) {
-                Graphviz.fromGraph(this.graph).width(700).render(Format.PNG).toFile(new File("example/ex4-2.png"));
-            }
-            else if(fileType.toLowerCase().equals("jpg") || fileType.toLowerCase().equals("jpeg")) {
-                String outputFile = "example/ex4-1." + fileType;
-                Graphviz.fromGraph(this.graph).width(700).render(Format.PNG).toFile(new File(outputFile));
+            String tempPath = fileType.toLowerCase().equals("png") ? "example/ex4-2.png" : "example/temp.png";
+            Graphviz.fromGraph(this.graph).width(700).render(Format.PNG).toFile(new File(tempPath));
+            if(fileType.toLowerCase().equals("jpg") || fileType.toLowerCase().equals("jpeg")) {
+                BufferedImage pngImage = ImageIO.read(new File(tempPath));
+                BufferedImage newImage = new BufferedImage( pngImage.getWidth(), pngImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+                newImage.createGraphics().drawImage( pngImage, 0, 0, Color.BLACK, null);
+                ImageIO.write(newImage, "jpg", new File("example/ex4-1." + fileType));
+                File tempFile = new File(tempPath);
+                tempFile.delete();
             }
         }
         catch (IOException e) {
@@ -122,7 +127,7 @@ public class GraphManager {
      * @param nodeName The name of the node
      * @return void
      */
-    public void addNode(String nodeName) {
+    public int addNode(String nodeName) {
         if(this.graph == null || this.dotFilePath == null) {
             this.initGraph();
         }
@@ -131,16 +136,17 @@ public class GraphManager {
         boolean isDuplicate = false;
         for (MutableNode node : this.graph.nodes()) {
             nodeSet.add(node.name().toString());
-            isDuplicate = node.name().toString().equals(nodeName);
+            isDuplicate = (!isDuplicate) ? node.name().toString().equals(nodeName) : true;
         }
 
         if(isDuplicate) {
             System.out.println("Node " + nodeName + " is already present in the graph");
-            return;
+            return 1;
         }
 
         // MutableNode node1 = (MutableNode) this.graph.add().asLinkSource();
         this.graph.add(mutNode(nodeName).asLinkSource());
+        return 0;
     }
 
     /**
@@ -171,9 +177,6 @@ public class GraphManager {
                 String resp = sc.nextLine();
                 if(resp.equals("y")) {
                     this.addNode(nodeName1);
-
-                    // node1 = mutNode(nodeName1);
-                    // nameToNodeMap.put(nodeName1, node1);
                 }
                 else {
                     System.out.println("Exiting...");
@@ -186,8 +189,6 @@ public class GraphManager {
                 String resp = sc.nextLine();
                 if(resp.equals("y")) {
                     this.addNode(nodeName2);
-                    //node2 = mutNode(nodeName2);
-                    //nameToNodeMap.put(nodeName2, node2);
                 }
                 else {
                     System.out.println("Exiting...");
@@ -295,10 +296,12 @@ public class GraphManager {
      * @param nodeNames The names of the nodes to be added
      * @return void
      */
-    public void addNodes(List<String> nodeNames) {
+    public int addNodes(List<String> nodeNames) {
+        Integer invalidCount = 0;
         for(String nodeName : nodeNames) {
-            this.addNode(nodeName);
+            invalidCount = this.addNode(nodeName) == 1 ? invalidCount + 1 : invalidCount;
         }
+        return invalidCount;
     }
 
     /**

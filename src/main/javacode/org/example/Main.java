@@ -78,9 +78,12 @@ public class Main {
                         nodeNames.add(nodeName);
                     }
 
-                    graphManager.addNodes(nodeNames);
-                    graphManager.parseGraph("png");
-                    System.out.println("The requested nodes have been added. Check out the example/ex4-2.png file");
+                    int invalidCount = graphManager.addNodes(nodeNames);
+
+                    if(nodeLen > invalidCount) {
+                        graphManager.parseGraph("png");
+                        System.out.println("The requested nodes have been added. Check out the example/ex4-2.png file");
+                    }
                     break;
                 }
                 case 4: {
