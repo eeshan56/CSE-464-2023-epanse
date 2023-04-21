@@ -81,8 +81,9 @@ public class Main {
                     int invalidCount = graphManager.addNodes(nodeNames);
 
                     if(nodeLen > invalidCount) {
-                        graphManager.parseGraph("png");
-                        System.out.println("The requested nodes have been added. Check out the example/ex4-2.png file");
+                        graphManager.parseGraph(GraphManager.PNG_STR);
+                        String defaultPngFilename = graphManager.isDirected() ? GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_DIRECTED_FILENAME + "." + GraphManager.PNG_STR : GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_UNDIRECTED_FILENAME + "." + GraphManager.PNG_STR;
+                        System.out.println("The requested node(s) have been deleted. Check out the '" + defaultPngFilename + "' file");
                     }
                     break;
                 }
@@ -98,7 +99,7 @@ public class Main {
                         System.out.print("Node 2: ");
                         String node2 = sc.nextLine();
 
-                        String connector = (graphManager.isDirected()) ? "-->" : "--";
+                        String connector = (graphManager.isDirected()) ? GraphManager.REGEX_DIRECTED_CONNECTOR : GraphManager.REGEX_UNDIRECTED_CONNECTOR;
                         System.out.println("Entered edge: " + node1 + connector + node2);
                         List<String> edgeGroups = new ArrayList<>();
                         edgeGroups.add(node1);
@@ -108,8 +109,9 @@ public class Main {
                     }
 
                     graphManager.addEdges(edgeList);
-                    graphManager.parseGraph("png");
-                    System.out.println("The requested edge(s) have been added. Check out the example/ex4-2.png file");
+                    graphManager.parseGraph(GraphManager.PNG_STR);
+                    String defaultPngFilename = graphManager.isDirected() ? GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_DIRECTED_FILENAME + "." + GraphManager.PNG_STR : GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_UNDIRECTED_FILENAME + "." + GraphManager.PNG_STR;
+                    System.out.println("The requested node(s) have been deleted. Check out the '" + defaultPngFilename + "' file");
                     break;
                 }
                 case 5: {
@@ -124,15 +126,16 @@ public class Main {
                         System.out.print("Node 2: ");
                         String node2 = sc.nextLine();
 
-                        String dotEdgeStr = node1 + "--" + node2;
+                        String dotEdgeStr = node1 + GraphManager.REGEX_UNDIRECTED_CONNECTOR + node2;
                         System.out.println("Entered edge: " + dotEdgeStr);
 
                         strEdgeList.add(dotEdgeStr);
                     }
 
                     graphManager.removeEdges(strEdgeList);
-                    graphManager.parseGraph("png");
-                    System.out.println("The requested edge(s) have been deleted. Check out the example/ex4-2.png file");
+                    graphManager.parseGraph(GraphManager.PNG_STR);
+                    String defaultPngFilename = graphManager.isDirected() ? GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_DIRECTED_FILENAME + "." + GraphManager.PNG_STR : GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_UNDIRECTED_FILENAME + "." + GraphManager.PNG_STR;
+                    System.out.println("The requested node(s) have been deleted. Check out the '" + defaultPngFilename + "' file");
                     break;
                 }
                 case 6: {
@@ -147,8 +150,9 @@ public class Main {
                     }
 
                     graphManager.removeNodes(nodeNames);
-                    graphManager.parseGraph("png");
-                    System.out.println("The requested node(s) have been deleted. Check out the example/ex4-2.png file");
+                    graphManager.parseGraph(GraphManager.PNG_STR);
+                    String defaultPngFilename = graphManager.isDirected() ? GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_DIRECTED_FILENAME + "." + GraphManager.PNG_STR : GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_UNDIRECTED_FILENAME + "." + GraphManager.PNG_STR;
+                    System.out.println("The requested node(s) have been deleted. Check out the '" + defaultPngFilename + "' file");
                     break;
                 }
                 case 7: {
@@ -173,7 +177,7 @@ public class Main {
                         try {
                             System.out.print("Enter the search algorithm(BFS/DFS): ");
                             algo = sc.nextLine();
-                            valid = (algo.toLowerCase().equals("bfs") || algo.toLowerCase().equals("dfs"));
+                            valid = (algo.toLowerCase().equals(GraphManager.BFS_STR) || algo.toLowerCase().equals(GraphManager.DFS_STR));
                         }
                         catch (Exception e) {
                             valid = false;
