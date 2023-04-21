@@ -126,8 +126,8 @@ public class GraphManager {
 
         Set<String> nodeSet = new HashSet<>();
 
-        for (MutableNode node : this.graph.nodes()) {
-            nodeSet.add(node.name().toString());
+        for (MutableNode currNode : this.graph.nodes()) {
+            nodeSet.add(currNode.name().toString());
         }
 
         System.out.println("Node List: (" + nodeSet.size() + " nodes)");
@@ -150,9 +150,9 @@ public class GraphManager {
 
         Set<String> nodeSet = new HashSet<>();
         boolean isDuplicate = false;
-        for (MutableNode node : this.graph.nodes()) {
-            nodeSet.add(node.name().toString());
-            isDuplicate = (!isDuplicate) ? node.name().toString().equals(nodeName) : true;
+        for (MutableNode currNode : this.graph.nodes()) {
+            nodeSet.add(currNode.name().toString());
+            isDuplicate = (!isDuplicate) ? currNode.name().toString().equals(nodeName) : true;
         }
 
         if(isDuplicate) {
@@ -175,9 +175,9 @@ public class GraphManager {
         }
 
         Map<String, MutableNode> nameToNodeMap = new HashMap<>();
-        for(MutableNode node : this.graph.nodes()) {
-            if(!nameToNodeMap.containsKey(node.name())) {
-                nameToNodeMap.put(String.valueOf(node.name()), node);
+        for(MutableNode currNode : this.graph.nodes()) {
+            if(!nameToNodeMap.containsKey(currNode.name())) {
+                nameToNodeMap.put(String.valueOf(currNode.name()), currNode);
             }
         }
 
@@ -213,9 +213,9 @@ public class GraphManager {
         }
 
         nameToNodeMap = new HashMap<>();
-        for(MutableNode node : this.graph.nodes()) {
-            if(!nameToNodeMap.containsKey(node.name())) {
-                nameToNodeMap.put(String.valueOf(node.name()), node);
+        for(MutableNode currNode : this.graph.nodes()) {
+            if(!nameToNodeMap.containsKey(currNode.name())) {
+                nameToNodeMap.put(String.valueOf(currNode.name()), currNode);
             }
         }
 
@@ -257,12 +257,12 @@ public class GraphManager {
 
         Map<String, MutableNode> nodeMap = new HashMap<>();
         Boolean nodeExists = false;
-        for(MutableNode node : this.graph.nodes()) {
-            if(!nodeMap.containsKey(node.name().toString()) && !nodeName.equals(node.name().toString())) {
-                nodeMap.put(node.name().toString(), node);
+        for(MutableNode currNode : this.graph.nodes()) {
+            if(!nodeMap.containsKey(currNode.name().toString()) && !nodeName.equals(currNode.name().toString())) {
+                nodeMap.put(currNode.name().toString(), currNode);
             }
 
-            nodeExists = nodeExists || node.name().toString().equals(nodeName);
+            nodeExists = nodeExists || currNode.name().toString().equals(nodeName);
         }
 
         if(!nodeExists) {
@@ -283,9 +283,9 @@ public class GraphManager {
         }
 
         Map<String, MutableNode> tempGraphMap = new HashMap<>();
-        for(MutableNode node : tempGraph.nodes()) {
-            if(!tempGraphMap.containsKey(node.name().toString())) {
-                tempGraphMap.put(node.name().toString(), node);
+        for(MutableNode currNode : tempGraph.nodes()) {
+            if(!tempGraphMap.containsKey(currNode.name().toString())) {
+                tempGraphMap.put(currNode.name().toString(), currNode);
             }
         }
 
@@ -341,9 +341,9 @@ public class GraphManager {
 
         Map<String, MutableNode> nodeMap = new HashMap<>();
 
-        for(MutableNode node : this.graph.nodes()) {
-            if(!nodeMap.containsKey(node.name().toString())) {
-                nodeMap.put(node.name().toString(), node);
+        for(MutableNode currNode : this.graph.nodes()) {
+            if(!nodeMap.containsKey(currNode.name().toString())) {
+                nodeMap.put(currNode.name().toString(), currNode);
             }
         }
 
@@ -371,9 +371,9 @@ public class GraphManager {
         }
 
         Map<String, MutableNode> tempGraphMap = new HashMap<>();
-        for(MutableNode node : tempGraph.nodes()) {
-            if(!tempGraphMap.containsKey(node.name().toString())) {
-                tempGraphMap.put(node.name().toString(), node);
+        for(MutableNode currNode : tempGraph.nodes()) {
+            if(!tempGraphMap.containsKey(currNode.name().toString())) {
+                tempGraphMap.put(currNode.name().toString(), currNode);
             }
         }
 
@@ -449,8 +449,8 @@ public class GraphManager {
             MutableNode currentNode = currentPath.get(currentPath.size() - 1);
             if (currentNode.name().toString().equals(dst.name().toString())) {
                 Path result = new Path();
-                for (MutableNode node : currentPath) {
-                    result.addToPath(node);
+                for (MutableNode currPathNode : currentPath) {
+                    result.addToPath(currPathNode);
                 }
                 return result;
             }
@@ -493,9 +493,9 @@ public class GraphManager {
         }
 
         Map<String, MutableNode> nodeMap = new HashMap<>();
-        for (MutableNode node : this.graph.nodes()) {
-            if(!nodeMap.containsKey(node.name().toString())) {
-                nodeMap.put(node.name().toString(), node);
+        for (MutableNode currNode : this.graph.nodes()) {
+            if(!nodeMap.containsKey(currNode.name().toString())) {
+                nodeMap.put(currNode.name().toString(), currNode);
             }
         }
 
