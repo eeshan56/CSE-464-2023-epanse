@@ -412,66 +412,9 @@ public class GraphManager {
      * @return A path instance that shows the path traversed to reach destination node
      */
     public Path GraphSearch(MutableNode src, MutableNode dst, String algo) {
-        List<MutableNode> nodeList = this.getNodeSet();
-
-        Queue<List<MutableNode>> queue = new LinkedList<>();
-        Stack<List<MutableNode>> stack = new Stack<>();
-
-        Set<String> visited = new HashSet<>();
-
-        List<MutableNode> path = new ArrayList<>();
-        path.add(src);
-
-        if(algo.equals(BFS_STR)) {
-            queue.add(path);
-        }
-        else {
-            stack.push(path);
-        }
-
-        Boolean datastructureEmpty = false;
-        while (!datastructureEmpty) {
-            List<MutableNode> currentPath = new ArrayList<>();
-
-            if(algo.equals(BFS_STR)) {
-                currentPath = queue.remove();
-            }
-            else {
-                currentPath = stack.pop();
-            }
-
-            MutableNode currentNode = currentPath.get(currentPath.size() - 1);
-            if (currentNode.name().toString().equals(dst.name().toString())) {
-                Path result = new Path();
-                for (MutableNode currPathNode : currentPath) {
-                    result.addToPath(currPathNode);
-                }
-                return result;
-            }
-
-            visited.add(currentNode.name().toString());
-
-            Collection<Link> neighNodes = currentNode.links();
-
-            for (Link neighbor : neighNodes) {
-
-                if (!visited.contains(neighbor.to().name().toString())) {
-                    List<MutableNode> newPath = new ArrayList<>(currentPath);
-
-                    LinkTarget toNode = neighbor.to();
-                    newPath.add((MutableNode) toNode.asLinkSource());
-                    if(algo.equals(BFS_STR)) {
-                        queue.add(newPath);
-                    }
-                    else {
-                        stack.push(newPath);
-                    }
-                }
-            }
-            datastructureEmpty = algo.equals(BFS_STR) ? queue.isEmpty() : stack.isEmpty();
-        }
-
-        return null;
+        GraphSearchTemplate search = algo.equals(BFS_STR) ? new BreadthFirstSearch() : new DepthFirstSearch();
+        Path result = search.GraphSearch(src, dst);
+        return result;
     }
 
     public List<MutableNode> getNodeSet() {
