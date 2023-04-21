@@ -211,7 +211,8 @@ public class Main {
                         break;
                     }
 
-                    Path path = graphManager.GraphSearch(srcNode, dstNode, algo.toLowerCase());
+                    Algorithm algorithm = algo.toLowerCase().equals(GraphManager.BFS_STR) ? new BreadthFirstSearch() : new DepthFirstSearch();
+                    Path path = graphManager.GraphSearch(srcNode, dstNode, algorithm);
                     if(path != null) {
                         System.out.println("path = " + path.getPath());
                     }

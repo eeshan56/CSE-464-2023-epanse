@@ -411,9 +411,8 @@ public class GraphManager {
      * @param dst destination node
      * @return A path instance that shows the path traversed to reach destination node
      */
-    public Path GraphSearch(MutableNode src, MutableNode dst, String algo) {
-        GraphSearchTemplate search = algo.equals(BFS_STR) ? new BreadthFirstSearch() : new DepthFirstSearch();
-        Path result = search.GraphSearch(src, dst);
+    public Path GraphSearch(MutableNode src, MutableNode dst, Algorithm algorithm) {
+        Path result = algorithm.GraphSearch(src, dst);
         return result;
     }
 

@@ -7,7 +7,7 @@ import javacode.org.example.Path;
 
 import java.util.*;
 
-public abstract class GraphSearchTemplate {
+public abstract class GraphSearchTemplate implements Algorithm {
     protected abstract Collection<Link> getNeighbors(MutableNode node);
 
     public Path GraphSearch(MutableNode src, MutableNode dst) {
