@@ -149,7 +149,7 @@ Here's an example of how to use BreadthFirstSearch and DepthFirstSearch classes 
     GraphSearchTemplate dfs = new DepthFirstSearch();
     Path dfsResult = dfs.GraphSearch(src, dst);
 
-#### c) Strategy Pattern for BFS/DFS:
+#### c) Strategy Pattern for BFS/DFS: [commit link](https://github.com/eeshan56/CSE-464-2023-epanse/commit/4c60fe21088ed98eae55b89a84c09c27a9b38d92)
 
 To implement the ability to choose between Breadth First Search (BFS) and Depth First Search (DFS)
 in the GraphSearch method, I applied the strategy pattern. I created an interface
@@ -162,7 +162,7 @@ BreadthFirstSearch or DepthFirstSearch accordingly. This instance is then passed
 GraphSearchTemplate's search method, which calls the useQueue method to determine whether
 to use a queue or stack, and performs the search accordingly.
 
-#### d) Random Walk Search:
+#### d) Random Walk Search: [commit link](https://github.com/eeshan56/CSE-464-2023-epanse/commit/e709be9834182f26e6a890f6366b22868850d89e)
 
 This was a new algorithm that was implemented using the same template and strategy patterns that
 were used in the previous features. A new class `RandomWalkSearch` was added and extended
@@ -175,6 +175,7 @@ no unvisited nodes that it can traverse during runtime.
 Sample results:
 
 Input Graph:
+
 ![img.png](input2.png)
 
 Results:
@@ -200,3 +201,4 @@ Results:
     Path traversed: a --> e --> g
     Path traversed: a --> e --> g --> h
     path = a --> e --> g --> h
+
