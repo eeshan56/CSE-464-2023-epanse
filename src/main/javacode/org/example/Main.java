@@ -32,7 +32,7 @@ public class Main {
         System.out.println("\t6. Remove node(s) from the graph");
         System.out.println("\t7. Output graph to DOT file");
         System.out.println("\t8. Output graph to Image");
-        System.out.println("\t9. BFS/DFS");
+        System.out.println("\t9. BFS/DFS/RWS");
         System.out.println("\t10. Exit");
     }
     public static void main(String[] args) {
@@ -175,9 +175,14 @@ public class Main {
                     Boolean valid = false;
                     while(!valid) {
                         try {
-                            System.out.print("Enter the search algorithm(BFS/DFS): ");
+                            System.out.print("Enter the search algorithm(BFS/DFS/Random Walk Search-RWS): ");
                             algo = sc.nextLine();
-                            valid = (algo.toLowerCase().equals(GraphManager.BFS_STR) || algo.toLowerCase().equals(GraphManager.DFS_STR));
+                            valid = (algo.toLowerCase().equals(GraphManager.BFS_STR)
+                                    || algo.toLowerCase().equals(GraphManager.DFS_STR)
+                                    || algo.toLowerCase().equals(GraphManager.RWS_STR));
+                            if(!valid) {
+                                System.out.println("Invalid input");
+                            }
                         }
                         catch (Exception e) {
                             valid = false;
@@ -211,10 +216,18 @@ public class Main {
                         break;
                     }
 
-                    Algorithm algorithm = algo.toLowerCase().equals(GraphManager.BFS_STR) ? new BreadthFirstSearch() : new DepthFirstSearch();
+                    Algorithm algorithm = (algo.toLowerCase().equals(GraphManager.BFS_STR)) ?
+                                            new BreadthFirstSearch() :
+                                            ((algo.toLowerCase().equals(GraphManager.RWS_STR)) ?
+                                                    new RandomWalkSearch() : new DepthFirstSearch());
                     Path path = graphManager.GraphSearch(srcNode, dstNode, algorithm);
                     if(path != null) {
-                        System.out.println("path = " + path.getPath());
+                        System.out.print("path = ");
+                        List<String> pathArr = path.getPath();
+                        for(Integer pathNodeIter = 0; pathNodeIter < pathArr.size() - 1; pathNodeIter ++) {
+                            System.out.print(pathArr.get(pathNodeIter) + " --> ");
+                        }
+                        System.out.println(pathArr.get(pathArr.size() - 1));
                     }
                     else {
                         System.out.println("Path not found...");

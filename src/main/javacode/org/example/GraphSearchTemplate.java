@@ -5,6 +5,7 @@ import guru.nidi.graphviz.model.LinkTarget;
 import guru.nidi.graphviz.model.MutableNode;
 import javacode.org.example.Path;
 
+import java.nio.channels.MulticastChannel;
 import java.util.*;
 
 public abstract class GraphSearchTemplate implements Algorithm {
@@ -90,6 +91,66 @@ class DepthFirstSearch extends GraphSearchTemplate {
     @Override
     protected Collection<Link> getNeighbors(MutableNode node) {
         return new ArrayList<>(node.links());
+    }
+
+    @Override
+    protected boolean useQueue() {
+        return false;
+    }
+}
+
+class RandomWalkSearch extends GraphSearchTemplate {
+
+    @Override
+    protected Collection<Link> getNeighbors(MutableNode node) {
+        return new ArrayList<>(node.links());
+    }
+
+    @Override
+    public Path GraphSearch(MutableNode src, MutableNode dst) {
+        MutableNode current = (MutableNode) src;
+        Set<String> visited = new HashSet<>();
+        visited.add(current.name().toString());
+        Path result = new Path();
+        result.addToPath(current);
+
+        String pathTraversed = current.name().toString();
+
+        while (!current.name().toString().equals(dst.name().toString())) {
+            Collection<Link> neighbors = getNeighbors(current);
+            List<MutableNode> validNeighbors = new ArrayList<>();
+            for (Link neighbor : neighbors) {
+                LinkTarget toNode = neighbor.to();
+                MutableNode toMutableNode = (MutableNode) toNode.asLinkSource();
+                if (!visited.contains(toMutableNode.name().toString())) {
+                    validNeighbors.add(toMutableNode);
+                }
+            }
+
+            if (validNeighbors.isEmpty()) {
+                System.out.println("No more unvisited nodes to traverse were found.");
+                System.out.println("Starting from source again...");
+                pathTraversed = src.name().toString();
+                System.out.println("Path traversed: " + pathTraversed);
+
+                current = (MutableNode) src;
+
+                result = new Path();
+                result.addToPath(current);
+
+                continue;
+            }
+
+            int randomIndex = (int) Math.round(Math.random() * validNeighbors.size()) % validNeighbors.size();
+            MutableNode next = validNeighbors.get(randomIndex);
+            visited.add(next.name().toString());
+            result.addToPath(next);
+            pathTraversed += " --> " + next.name().toString();
+            System.out.println("Path traversed: " + pathTraversed);
+            current = next;
+        }
+
+        return result;
     }
 
     @Override

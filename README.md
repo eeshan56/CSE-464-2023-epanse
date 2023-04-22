@@ -161,3 +161,42 @@ parameter that determines which algorithm to use, and creates an instance of eit
 BreadthFirstSearch or DepthFirstSearch accordingly. This instance is then passed to
 GraphSearchTemplate's search method, which calls the useQueue method to determine whether
 to use a queue or stack, and performs the search accordingly.
+
+#### d) Random Walk Search:
+
+This was a new algorithm that was implemented using the same template and strategy patterns that
+were used in the previous features. A new class `RandomWalkSearch` was added and extended
+the GraphSearchTemplate. However, since its implementation is different from that of BFS
+and DFS, it overrides the `Path GraphSearch(MutableNode src, MutableNode dst)` abstract method
+and randomly visits unvisited neighbours of the current node where it has traversed and returns
+a path from the source node to the destination node. It also re-initializes its search if there are
+no unvisited nodes that it can traverse during runtime.
+
+Sample results:
+
+Input Graph:
+![img.png](input2.png)
+
+Results:
+
+    Enter the search algorithm(BFS/DFS/Random Walk Search-RWS): rws
+    Enter the source node name: a
+    Enter the destination node name: h
+    Path traversed: a --> e
+    Path traversed: a --> e --> f
+    Path traversed: a --> e --> f --> h
+    path = a --> e --> f --> h
+
+    Enter the search algorithm(BFS/DFS/Random Walk Search-RWS): rws
+    Enter the source node name: a
+    Enter the destination node name: h
+    Path traversed: a --> b
+    Path traversed: a --> b --> c
+    Path traversed: a --> b --> c --> d
+    No more unvisited nodes to traverse were found.
+    Starting from source again...
+    Path traversed: a
+    Path traversed: a --> e
+    Path traversed: a --> e --> g
+    Path traversed: a --> e --> g --> h
+    path = a --> e --> g --> h

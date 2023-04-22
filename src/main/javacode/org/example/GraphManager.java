@@ -36,6 +36,7 @@ public class GraphManager {
     public static final String DEFAULT_OUTPUT_DOT_FILEPATH = OUTPUT_DIR + "output.dot";
     public static final String BFS_STR = "bfs";
     public static final String DFS_STR = "dfs";
+    public static final String RWS_STR = "rws";
 
     private MutableGraph graph = null;
     private String dotFilePath = null;
