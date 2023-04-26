@@ -32,12 +32,15 @@ public class Main {
         System.out.println("\t6. Remove node(s) from the graph");
         System.out.println("\t7. Output graph to DOT file");
         System.out.println("\t8. Output graph to Image");
-        System.out.println("\t9. BFS/DFS");
+        System.out.println("\t9. BFS/DFS/RWS");
         System.out.println("\t10. Exit");
     }
     public static void main(String[] args) {
+
         String resp = "";
         GraphManager graphManager = new GraphManager();
+
+        String defaultPngFilename = graphManager.isDirected() ? GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_DIRECTED_FILENAME + "." + GraphManager.PNG_STR : GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_UNDIRECTED_FILENAME + "." + GraphManager.PNG_STR;
 
         List<String> nodeNames;
         List<List<String>> edgeList;
@@ -78,9 +81,12 @@ public class Main {
                         nodeNames.add(nodeName);
                     }
 
-                    graphManager.addNodes(nodeNames);
-                    graphManager.parseGraph("png");
-                    System.out.println("The requested nodes have been added. Check out the example/ex4-2.png file");
+                    int invalidCount = graphManager.addNodes(nodeNames);
+
+                    if(nodeLen > invalidCount) {
+                        graphManager.parseGraph(GraphManager.PNG_STR);
+                        System.out.println("The requested node(s) have been deleted. Check out the '" + defaultPngFilename + "' file");
+                    }
                     break;
                 }
                 case 4: {
@@ -95,7 +101,7 @@ public class Main {
                         System.out.print("Node 2: ");
                         String node2 = sc.nextLine();
 
-                        String connector = (graphManager.isDirected()) ? "-->" : "--";
+                        String connector = (graphManager.isDirected()) ? GraphManager.REGEX_DIRECTED_CONNECTOR : GraphManager.REGEX_UNDIRECTED_CONNECTOR;
                         System.out.println("Entered edge: " + node1 + connector + node2);
                         List<String> edgeGroups = new ArrayList<>();
                         edgeGroups.add(node1);
@@ -105,8 +111,8 @@ public class Main {
                     }
 
                     graphManager.addEdges(edgeList);
-                    graphManager.parseGraph("png");
-                    System.out.println("The requested edge(s) have been added. Check out the example/ex4-2.png file");
+                    graphManager.parseGraph(GraphManager.PNG_STR);
+                    System.out.println("The requested node(s) have been deleted. Check out the '" + defaultPngFilename + "' file");
                     break;
                 }
                 case 5: {
@@ -121,15 +127,15 @@ public class Main {
                         System.out.print("Node 2: ");
                         String node2 = sc.nextLine();
 
-                        String dotEdgeStr = node1 + "--" + node2;
+                        String dotEdgeStr = node1 + GraphManager.REGEX_UNDIRECTED_CONNECTOR + node2;
                         System.out.println("Entered edge: " + dotEdgeStr);
 
                         strEdgeList.add(dotEdgeStr);
                     }
 
                     graphManager.removeEdges(strEdgeList);
-                    graphManager.parseGraph("png");
-                    System.out.println("The requested edge(s) have been deleted. Check out the example/ex4-2.png file");
+                    graphManager.parseGraph(GraphManager.PNG_STR);
+                    System.out.println("The requested node(s) have been deleted. Check out the '" + defaultPngFilename + "' file");
                     break;
                 }
                 case 6: {
@@ -144,8 +150,9 @@ public class Main {
                     }
 
                     graphManager.removeNodes(nodeNames);
-                    graphManager.parseGraph("png");
-                    System.out.println("The requested node(s) have been deleted. Check out the example/ex4-2.png file");
+                    graphManager.parseGraph(GraphManager.PNG_STR);
+
+                    System.out.println("The requested node(s) have been deleted. Check out the '" + defaultPngFilename + "' file");
                     break;
                 }
                 case 7: {
@@ -168,9 +175,14 @@ public class Main {
                     Boolean valid = false;
                     while(!valid) {
                         try {
-                            System.out.print("Enter the search algorithm(BFS/DFS): ");
+                            System.out.print("Enter the search algorithm(BFS/DFS/Random Walk Search-RWS): ");
                             algo = sc.nextLine();
-                            valid = (algo.toLowerCase().equals("bfs") || algo.toLowerCase().equals("dfs"));
+                            valid = (algo.toLowerCase().equals(GraphManager.BFS_STR)
+                                    || algo.toLowerCase().equals(GraphManager.DFS_STR)
+                                    || algo.toLowerCase().equals(GraphManager.RWS_STR));
+                            if(!valid) {
+                                System.out.println("Invalid input");
+                            }
                         }
                         catch (Exception e) {
                             valid = false;
@@ -204,9 +216,18 @@ public class Main {
                         break;
                     }
 
-                    Path path = graphManager.GraphSearch(srcNode, dstNode, algo.toLowerCase());
+                    Algorithm algorithm = (algo.toLowerCase().equals(GraphManager.BFS_STR)) ?
+                                            new BreadthFirstSearch() :
+                                            ((algo.toLowerCase().equals(GraphManager.RWS_STR)) ?
+                                                    new RandomWalkSearch() : new DepthFirstSearch());
+                    Path path = graphManager.GraphSearch(srcNode, dstNode, algorithm);
                     if(path != null) {
-                        System.out.println("path = " + path.getPath());
+                        System.out.print("path = ");
+                        List<String> pathArr = path.getPath();
+                        for(Integer pathNodeIter = 0; pathNodeIter < pathArr.size() - 1; pathNodeIter ++) {
+                            System.out.print(pathArr.get(pathNodeIter) + " --> ");
+                        }
+                        System.out.println(pathArr.get(pathArr.size() - 1));
                     }
                     else {
                         System.out.println("Path not found...");

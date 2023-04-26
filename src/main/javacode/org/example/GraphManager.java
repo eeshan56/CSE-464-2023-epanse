@@ -1,5 +1,6 @@
 package javacode.org.example;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileWriter;
 import java.util.*;
@@ -18,8 +19,25 @@ import static guru.nidi.graphviz.model.Factory.mutNode;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class GraphManager {
+    public static final String DEFAULT_DOT_FILEPATH = "src/main/java/org/example/color.dot";
+    public static final String REGEX_UNDIRECTED_CONNECTOR = "--";
+    public static final String REGEX_DIRECTED_CONNECTOR = "-->";
+    public static final String JPG_STR = "jpg";
+    public static final String PNG_STR = "png";
+    public static final String JPEG_STR = "jpeg";
+
+    public static final String OUTPUT_DIR = "example/";
+    public static final String DEFAULT_PNG_DIRECTED_FILENAME = "ex4-2";
+    public static final String DEFAULT_PNG_UNDIRECTED_FILENAME = "ex4-3";
+    public static final String DEFAULT_JPEG_FILENAME = "ex4-1";
+    public static final String DEFAULT_OUTPUT_DOT_FILEPATH = OUTPUT_DIR + "output.dot";
+    public static final String BFS_STR = "bfs";
+    public static final String DFS_STR = "dfs";
+    public static final String RWS_STR = "rws";
+
     private MutableGraph graph = null;
     private String dotFilePath = null;
 
@@ -60,13 +78,13 @@ public class GraphManager {
      */
     public void initGraph() {
 
-        System.out.println("Default filepath of the dot file is 'src/main/java/org/example/color.dot'.");
+        System.out.println("Default filepath of the dot file is '" + DEFAULT_DOT_FILEPATH + "'");
         System.out.print("Do you want to continue with the default dot file? (Enter y/n): ");
         Scanner sc = new Scanner(System.in);
         String resp = sc.nextLine();
 
         if(resp.equals("y") || resp.equals("Y")) {
-            this.dotFilePath = "src/main/java/org/example/color.dot";
+            this.dotFilePath = DEFAULT_DOT_FILEPATH;
         }
         else {
             System.out.println("Please provide the filepath of the dot file that contains the graph config: ");
@@ -81,12 +99,16 @@ public class GraphManager {
      */
     public void parseGraph(String fileType) {
         try {
-            if(fileType.toLowerCase().equals("png")) {
-                Graphviz.fromGraph(this.graph).width(700).render(Format.PNG).toFile(new File("example/ex4-2.png"));
-            }
-            else if(fileType.toLowerCase().equals("jpg") || fileType.toLowerCase().equals("jpeg")) {
-                String outputFile = "example/ex4-1." + fileType;
-                Graphviz.fromGraph(this.graph).width(700).render(Format.PNG).toFile(new File(outputFile));
+            String defaultPngFilename = this.isDirected() ? OUTPUT_DIR + DEFAULT_PNG_DIRECTED_FILENAME + "." + PNG_STR : OUTPUT_DIR + DEFAULT_PNG_UNDIRECTED_FILENAME + "." + PNG_STR;
+            String tempPath = fileType.toLowerCase().equals(PNG_STR) ? defaultPngFilename : OUTPUT_DIR + "temp." + PNG_STR;
+            Graphviz.fromGraph(this.graph).width(700).render(Format.PNG).toFile(new File(tempPath));
+            if(fileType.toLowerCase().equals(JPG_STR) || fileType.toLowerCase().equals(JPEG_STR)) {
+                BufferedImage pngImage = ImageIO.read(new File(tempPath));
+                BufferedImage newImage = new BufferedImage( pngImage.getWidth(), pngImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+                newImage.createGraphics().drawImage( pngImage, 0, 0, Color.BLACK, null);
+                ImageIO.write(newImage, JPG_STR, new File(OUTPUT_DIR + DEFAULT_JPEG_FILENAME + "." + fileType));
+                File tempFile = new File(tempPath);
+                tempFile.delete();
             }
         }
         catch (IOException e) {
@@ -99,14 +121,12 @@ public class GraphManager {
      * @return void
      */
     public void outputGraph() {
-        if(this.graph == null || this.dotFilePath == null) {
-            this.initGraph();
-        }
+        this.checkIfGraphIsNull();
 
         Set<String> nodeSet = new HashSet<>();
 
-        for (MutableNode node : this.graph.nodes()) {
-            nodeSet.add(node.name().toString());
+        for (MutableNode currNode : this.graph.nodes()) {
+            nodeSet.add(currNode.name().toString());
         }
 
         System.out.println("Node List: (" + nodeSet.size() + " nodes)");
@@ -122,25 +142,23 @@ public class GraphManager {
      * @param nodeName The name of the node
      * @return void
      */
-    public void addNode(String nodeName) {
-        if(this.graph == null || this.dotFilePath == null) {
-            this.initGraph();
-        }
+    public int addNode(String nodeName) {
+        this.checkIfGraphIsNull();
 
         Set<String> nodeSet = new HashSet<>();
         boolean isDuplicate = false;
-        for (MutableNode node : this.graph.nodes()) {
-            nodeSet.add(node.name().toString());
-            isDuplicate = node.name().toString().equals(nodeName);
+        for (MutableNode currNode : this.graph.nodes()) {
+            nodeSet.add(currNode.name().toString());
+            isDuplicate = (!isDuplicate) ? currNode.name().toString().equals(nodeName) : true;
         }
 
         if(isDuplicate) {
             System.out.println("Node " + nodeName + " is already present in the graph");
-            return;
+            return 1;
         }
 
-        // MutableNode node1 = (MutableNode) this.graph.add().asLinkSource();
         this.graph.add(mutNode(nodeName).asLinkSource());
+        return 0;
     }
 
     /**
@@ -149,17 +167,15 @@ public class GraphManager {
      * @return void
      */
     public void addEdges(List<List<String>> edgeList) {
-        if(this.graph == null || this.dotFilePath == null) {
-            this.initGraph();
-        }
+        this.checkIfGraphIsNull();
 
         Map<String, MutableNode> nameToNodeMap = new HashMap<>();
-        for(MutableNode node : this.graph.nodes()) {
-            if(!nameToNodeMap.containsKey(node.name())) {
-                nameToNodeMap.put(String.valueOf(node.name()), node);
+        for(MutableNode currNode : this.graph.nodes()) {
+            if(!nameToNodeMap.containsKey(currNode.name())) {
+                nameToNodeMap.put(String.valueOf(currNode.name()), currNode);
             }
         }
-        // System.out.println("nodeMap = " + nameToNodeMap);
+
         Scanner sc = new Scanner(System.in);
 
         for (List<String> edgeGroups : edgeList) {
@@ -171,9 +187,6 @@ public class GraphManager {
                 String resp = sc.nextLine();
                 if(resp.equals("y")) {
                     this.addNode(nodeName1);
-
-                    // node1 = mutNode(nodeName1);
-                    // nameToNodeMap.put(nodeName1, node1);
                 }
                 else {
                     System.out.println("Exiting...");
@@ -186,8 +199,6 @@ public class GraphManager {
                 String resp = sc.nextLine();
                 if(resp.equals("y")) {
                     this.addNode(nodeName2);
-                    //node2 = mutNode(nodeName2);
-                    //nameToNodeMap.put(nodeName2, node2);
                 }
                 else {
                     System.out.println("Exiting...");
@@ -197,9 +208,9 @@ public class GraphManager {
         }
 
         nameToNodeMap = new HashMap<>();
-        for(MutableNode node : this.graph.nodes()) {
-            if(!nameToNodeMap.containsKey(node.name())) {
-                nameToNodeMap.put(String.valueOf(node.name()), node);
+        for(MutableNode currNode : this.graph.nodes()) {
+            if(!nameToNodeMap.containsKey(currNode.name())) {
+                nameToNodeMap.put(String.valueOf(currNode.name()), currNode);
             }
         }
 
@@ -209,7 +220,7 @@ public class GraphManager {
 
             Boolean isDuplicate = false;
             for(Link link : node1.links()) {
-                List<String> linkSplit = List.of(link.name().toString().split("--"));
+                List<String> linkSplit = List.of(link.name().toString().split(REGEX_UNDIRECTED_CONNECTOR));
                 if(linkSplit.get(0).equals(node2.name().toString()) || linkSplit.get(1).equals(node2.name().toString())) {
                     isDuplicate = true;
                 }
@@ -219,7 +230,7 @@ public class GraphManager {
                 node1.addLink(node2);
             }
             else {
-                String connector = (this.graph.isDirected()) ? "-->" : "--";
+                String connector = (this.graph.isDirected()) ? REGEX_DIRECTED_CONNECTOR : REGEX_UNDIRECTED_CONNECTOR;
                 System.out.println(node1.name() + connector + node2.name() + " is already present in the graph.");
             }
         }
@@ -241,12 +252,12 @@ public class GraphManager {
 
         Map<String, MutableNode> nodeMap = new HashMap<>();
         Boolean nodeExists = false;
-        for(MutableNode node : this.graph.nodes()) {
-            if(!nodeMap.containsKey(node.name().toString()) && !nodeName.equals(node.name().toString())) {
-                nodeMap.put(node.name().toString(), node);
+        for(MutableNode currNode : this.graph.nodes()) {
+            if(!nodeMap.containsKey(currNode.name().toString()) && !nodeName.equals(currNode.name().toString())) {
+                nodeMap.put(currNode.name().toString(), currNode);
             }
 
-            nodeExists = nodeExists || node.name().toString().equals(nodeName);
+            nodeExists = nodeExists || currNode.name().toString().equals(nodeName);
         }
 
         if(!nodeExists) {
@@ -260,16 +271,16 @@ public class GraphManager {
         List<List<String>> edgeList = new ArrayList<>();
         for (Link edge : this.graph.edges()) {
             String edgeGroup = edge.name().toString();
-            String[] groupSplit = edgeGroup.split("--");
+            String[] groupSplit = edgeGroup.split(REGEX_UNDIRECTED_CONNECTOR);
             if(!groupSplit[0].equals(nodeName) && !groupSplit[1].equals(nodeName)) {
                 edgeList.add(List.of(groupSplit));
             }
         }
 
         Map<String, MutableNode> tempGraphMap = new HashMap<>();
-        for(MutableNode node : tempGraph.nodes()) {
-            if(!tempGraphMap.containsKey(node.name().toString())) {
-                tempGraphMap.put(node.name().toString(), node);
+        for(MutableNode currNode : tempGraph.nodes()) {
+            if(!tempGraphMap.containsKey(currNode.name().toString())) {
+                tempGraphMap.put(currNode.name().toString(), currNode);
             }
         }
 
@@ -282,12 +293,7 @@ public class GraphManager {
         }
 
         this.graph = tempGraph;
-        try {
-            Graphviz.fromGraph(tempGraph).width(700).render(Format.PNG).toFile(new File("example/ex4-3.png"));
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        this.parseGraph(PNG_STR);
     }
 
     /**
@@ -295,10 +301,12 @@ public class GraphManager {
      * @param nodeNames The names of the nodes to be added
      * @return void
      */
-    public void addNodes(List<String> nodeNames) {
+    public int addNodes(List<String> nodeNames) {
+        Integer invalidCount = 0;
         for(String nodeName : nodeNames) {
-            this.addNode(nodeName);
+            invalidCount = this.addNode(nodeName) == 1 ? invalidCount + 1 : invalidCount;
         }
+        return invalidCount;
     }
 
     /**
@@ -328,9 +336,9 @@ public class GraphManager {
 
         Map<String, MutableNode> nodeMap = new HashMap<>();
 
-        for(MutableNode node : this.graph.nodes()) {
-            if(!nodeMap.containsKey(node.name().toString())) {
-                nodeMap.put(node.name().toString(), node);
+        for(MutableNode currNode : this.graph.nodes()) {
+            if(!nodeMap.containsKey(currNode.name().toString())) {
+                nodeMap.put(currNode.name().toString(), currNode);
             }
         }
 
@@ -341,7 +349,7 @@ public class GraphManager {
         List<List<String>> remainingEdges = new ArrayList<>();
         for (Link edge : this.graph.edges()) {
             String edgeGroup = edge.name().toString();
-            String[] groupSplit = edgeGroup.split("--");
+            String[] groupSplit = edgeGroup.split(REGEX_UNDIRECTED_CONNECTOR);
 
             if(this.graph.isDirected()) {
                 if(!edgeList.contains(edgeGroup)) {
@@ -349,7 +357,7 @@ public class GraphManager {
                 }
             }
             else {
-                String revEdgeGroup = groupSplit[1] + "--" + groupSplit[0];
+                String revEdgeGroup = groupSplit[1] + REGEX_UNDIRECTED_CONNECTOR + groupSplit[0];
 
                 if(!edgeList.contains(edgeGroup) && !edgeList.contains(revEdgeGroup)) {
                     remainingEdges.add(List.of(groupSplit));
@@ -358,9 +366,9 @@ public class GraphManager {
         }
 
         Map<String, MutableNode> tempGraphMap = new HashMap<>();
-        for(MutableNode node : tempGraph.nodes()) {
-            if(!tempGraphMap.containsKey(node.name().toString())) {
-                tempGraphMap.put(node.name().toString(), node);
+        for(MutableNode currNode : tempGraph.nodes()) {
+            if(!tempGraphMap.containsKey(currNode.name().toString())) {
+                tempGraphMap.put(currNode.name().toString(), currNode);
             }
         }
 
@@ -373,12 +381,7 @@ public class GraphManager {
         }
 
         this.graph = tempGraph;
-        try {
-            Graphviz.fromGraph(tempGraph).width(700).render(Format.PNG).toFile(new File("example/ex4-3.png"));
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        this.parseGraph(PNG_STR);
     }
 
     /**
@@ -391,10 +394,10 @@ public class GraphManager {
         }
 
         try {
-            FileWriter dotWriter = new FileWriter("example/output.dot");
+            FileWriter dotWriter = new FileWriter(DEFAULT_OUTPUT_DOT_FILEPATH);
             dotWriter.write(this.graph.toString());
             dotWriter.close();
-            System.out.println("Graph has been exported to 'example/output.dot'");
+            System.out.println("Graph has been exported to '" + DEFAULT_OUTPUT_DOT_FILEPATH + "'");
         }
         catch (IOException e) {
             System.out.println("An error occurred.");
@@ -409,146 +412,10 @@ public class GraphManager {
      * @param dst destination node
      * @return A path instance that shows the path traversed to reach destination node
      */
-    public Path GraphSearch(MutableNode src, MutableNode dst, String algo) {
-        List<MutableNode> nodeList = this.getNodeSet();
-        // Map<String, List<String>> neighborMap = createNeighborMap();
-
-        Queue<List<MutableNode>> queue = new LinkedList<>();
-        Stack<List<MutableNode>> stack = new Stack<>();
-
-        Set<String> visited = new HashSet<>();
-
-        List<MutableNode> path = new ArrayList<>();
-        path.add(src);
-
-        if(algo.equals("bfs")) {
-            queue.add(path);
-        }
-        else {
-            stack.push(path);
-        }
-
-        Boolean datastructureEmpty = false;
-        while (!datastructureEmpty) {
-//            this.displayQueue(queue);
-            List<MutableNode> currentPath = new ArrayList<>();
-
-            if(algo.equals("bfs")) {
-                currentPath = queue.remove();
-            }
-            else {
-                currentPath = stack.pop();
-            }
-
-            MutableNode currentNode = currentPath.get(currentPath.size() - 1);
-            if (currentNode.name().toString().equals(dst.name().toString())) {
-                Path result = new Path();
-                for (MutableNode node : currentPath) {
-                    result.addToPath(node);
-                }
-                return result;
-            }
-
-            visited.add(currentNode.name().toString());
-//            List<String> neighborNodes = neighborMap.get(currentNode.name().toString());
-//            List<MutableNode> neighNodes = new ArrayList<>();
-//
-//            for(MutableNode node : nodeList) {
-//                if(!neighborNodes.contains(node.name().toString())) {
-//                    System.out.println(node.name().toString());
-//                    neighNodes.add(node);
-//                }
-//            }
-
-            Collection<Link> neighNodes = currentNode.links();
-
-            for (Link neighbor : neighNodes) {
-
-                if (!visited.contains(neighbor.to().name().toString())) {
-                    List<MutableNode> newPath = new ArrayList<>(currentPath);
-
-                    LinkTarget toNode = neighbor.to();
-                    newPath.add((MutableNode) toNode.asLinkSource());
-                    if(algo.equals("bfs")) {
-                        queue.add(newPath);
-                    }
-                    else {
-                        stack.push(newPath);
-                    }
-                }
-            }
-
-            if(algo.equals("bfs")) {
-                datastructureEmpty = queue.isEmpty();
-            }
-            else {
-                datastructureEmpty = stack.isEmpty();
-            }
-        }
-
-        return null;
+    public Path GraphSearch(MutableNode src, MutableNode dst, Algorithm algorithm) {
+        Path result = algorithm.GraphSearch(src, dst);
+        return result;
     }
-
-    public void displayQueue(Queue<List<MutableNode>> queue) {
-        Queue<List<MutableNode>> queueCopy = new LinkedList<>(queue);
-        while(!queueCopy.isEmpty()) {
-            System.out.println(queueCopy.remove());
-        }
-    }
-
-//    private Map<String, List<String>> createNeighborMap() {
-//        Map<String, List<String>> neighborMap = new HashMap<>();
-//        for (MutableNode currNode : this.graph.nodes()) {
-//            for (Link edge : currNode.links()) {
-//                List<String> edgeNodes = List.of(edge.toString().split("--"));
-//                if (this.graph.isDirected()) {
-//                    List<String> corrEdges;
-//                    if (!neighborMap.containsKey(currNode.name().toString())) {
-//                        corrEdges = new ArrayList<>();
-//                    } else {
-//                        corrEdges = neighborMap.get(currNode.name().toString());
-//                    }
-//
-//                    if (edgeNodes.get(0).equals(currNode.name().toString())) {
-//                        corrEdges.add(edgeNodes.get(1));
-//                    } else {
-//                        corrEdges.add(edgeNodes.get(0));
-//                    }
-//
-//                    neighborMap.put(currNode.name().toString(), corrEdges);
-//                }
-//                else {
-//                    Integer currInd = 0;
-//                    if (!edgeNodes.get(0).equals(currNode.name().toString())) {
-//                        currInd = 1;
-//                    }
-//                    Integer newInd = (currInd == 0) ? 1 : 0;
-//
-//                    List<String> corrEdges1;
-//                    List<String> corrEdges2;
-//
-//                    if (!neighborMap.containsKey(currNode.name().toString())) {
-//                        corrEdges1 = new ArrayList<>();
-//                    } else {
-//                        corrEdges1 = neighborMap.get(currNode.name().toString());
-//                    }
-//
-//                    if (!neighborMap.containsKey(edgeNodes.get(newInd))) {
-//                        corrEdges2 = new ArrayList<>();
-//                    } else {
-//                        corrEdges2 = neighborMap.get(edgeNodes.get(newInd));
-//                    }
-//
-//                    corrEdges1.add(edgeNodes.get(newInd));
-//                    corrEdges2.add(edgeNodes.get(currInd));
-//
-//                    neighborMap.put(currNode.name().toString(), corrEdges1);
-//                    neighborMap.put(edgeNodes.get(newInd), corrEdges2);
-//                }
-//            }
-//        }
-//        return neighborMap;
-//    }
 
     public List<MutableNode> getNodeSet() {
         if(this.graph == null) {
@@ -556,9 +423,9 @@ public class GraphManager {
         }
 
         Map<String, MutableNode> nodeMap = new HashMap<>();
-        for (MutableNode node : this.graph.nodes()) {
-            if(!nodeMap.containsKey(node.name().toString())) {
-                nodeMap.put(node.name().toString(), node);
+        for (MutableNode currNode : this.graph.nodes()) {
+            if(!nodeMap.containsKey(currNode.name().toString())) {
+                nodeMap.put(currNode.name().toString(), currNode);
             }
         }
 
@@ -575,9 +442,13 @@ public class GraphManager {
         return new ArrayList<>(this.graph.edges());
     }
 
-
-
     public String getDotFilePath() {
         return this.dotFilePath;
+    }
+
+    public void checkIfGraphIsNull() {
+        if(this.graph == null || this.dotFilePath == null) {
+            this.initGraph();
+        }
     }
 }

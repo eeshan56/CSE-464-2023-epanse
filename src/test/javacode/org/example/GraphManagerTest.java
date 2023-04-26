@@ -17,7 +17,7 @@ class GraphManagerTest {
         Boolean result = graphManager.isDirected();
         assertEquals(false, result);
 
-        graphManager = new GraphManager("src/main/java/org/example/color.dot");
+        graphManager = new GraphManager(GraphManager.DEFAULT_DOT_FILEPATH);
         result = graphManager.isDirected();
         assertEquals(true, result);
 
@@ -29,7 +29,7 @@ class GraphManagerTest {
     @Test
     void testGetGraph() {
         GraphManager graphManager = new GraphManager();
-        graphManager.getGraph("src/main/java/org/example/color.dot");
+        graphManager.getGraph(GraphManager.DEFAULT_DOT_FILEPATH);
 
         List<String> nodeNames = List.of("white", "cyan", "pink", "yellow", "blue", "green", "red", "black");
         List<MutableNode> nodeList = graphManager.getNodeSet();
@@ -74,7 +74,7 @@ class GraphManagerTest {
 
         GraphManager graphManager = new GraphManager();
         graphManager.initGraph();
-        assertEquals("src/main/java/org/example/color.dot", graphManager.getDotFilePath());
+        assertEquals(GraphManager.DEFAULT_DOT_FILEPATH, graphManager.getDotFilePath());
     }
 
     @Test
@@ -90,16 +90,16 @@ class GraphManagerTest {
     @Test
     public void testParseGraphWithPNG() {
         GraphManager graph = new GraphManager();
-        graph.parseGraph("png");
-        File outputFile = new File("example/ex4-2.png");
+        graph.parseGraph(GraphManager.PNG_STR);
+        File outputFile = new File(GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_PNG_DIRECTED_FILENAME + "." + GraphManager.PNG_STR);
         assertTrue(outputFile.exists());
     }
 
     @Test
     public void testParseGraphWithJPEG() {
         GraphManager graph = new GraphManager();
-        graph.parseGraph("jpeg");
-        File outputFile = new File("example/ex4-1.jpeg");
+        graph.parseGraph(GraphManager.JPEG_STR);
+        File outputFile = new File(GraphManager.OUTPUT_DIR + GraphManager.DEFAULT_JPEG_FILENAME + "." + GraphManager.JPEG_STR);
         assertTrue(outputFile.exists());
     }
 
@@ -184,7 +184,7 @@ class GraphManagerTest {
         for(List<String> edge : edges) {
             boolean containsEdge = false;
             for(Link link : edgeList) {
-                String[] linkSplit = link.name().toString().split("--");
+                String[] linkSplit = link.name().toString().split(GraphManager.REGEX_UNDIRECTED_CONNECTOR);
                 if(linkSplit[0].equals(edge.get(0)) && linkSplit[1].equals(edge.get(1))) {
                     containsEdge = true;
                     break;
@@ -216,7 +216,7 @@ class GraphManagerTest {
             if(!edge.get(0).equals("C") && !edge.get(1).equals("C")) {
                 boolean containsEdge = false;
                 for(Link link : edgeList) {
-                    String[] linkSplit = link.name().toString().split("--");
+                    String[] linkSplit = link.name().toString().split(GraphManager.REGEX_UNDIRECTED_CONNECTOR);
                     if(linkSplit[0].equals(edge.get(0)) && linkSplit[1].equals(edge.get(1))) {
                         containsEdge = true;
                         break;
@@ -266,7 +266,7 @@ class GraphManagerTest {
             System.out.println("Something's wrong...");
             e.printStackTrace();
         }
-        File file = new File("example/output.dot");
+        File file = new File(GraphManager.DEFAULT_OUTPUT_DOT_FILEPATH);
         assertTrue(file.exists());
     }
 }
