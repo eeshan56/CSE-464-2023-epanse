@@ -53,13 +53,24 @@ public class Main {
             Scanner sc = new Scanner(System.in);
             resp = sc.nextLine();
             Integer respInt = 0;
-            try {
-                respInt = Integer.parseInt(resp);
+
+            Boolean respValid = false;
+            while(!respValid) {
+                try {
+                    respInt = Integer.parseInt(resp);
+                    if(respInt > 0 && respInt < 11) {
+                        respValid = true;
+                    }
+                    else {
+                        throw new Exception("Invalid choice");
+                    }
+                }
+                catch (Exception exc) {
+                    System.out.println("Invalid choice. Please enter a valid menu option (1 to 10)");
+                    resp = sc.nextLine();
+                }
             }
-            catch (Exception exc) {
-                exc.printStackTrace();
-                break;
-            }
+
             switch (respInt) {
                 case 1: {
                     graphManager.initGraph();
@@ -172,6 +183,7 @@ public class Main {
                 }
                 case 9: {
                     String algo = "";
+                    String pattern = "";
                     Boolean valid = false;
                     while(!valid) {
                         try {
@@ -185,7 +197,20 @@ public class Main {
                             }
                         }
                         catch (Exception e) {
-                            valid = false;
+                            System.out.println("Invalid input");
+                        }
+                    }
+
+                    valid = false;
+                    while(!valid) {
+                        System.out.print("Enter the desired Design Pattern (Template/Strategy): ");
+                        pattern = sc.nextLine();
+                        if(pattern.toLowerCase().equals(GraphManager.TEMPLATE_STR)
+                                || pattern.toLowerCase().equals(GraphManager.STRATEGY_STR)) {
+                            break;
+                        }
+                        else {
+                            System.out.println("Invalid input.");
                         }
                     }
 
@@ -216,11 +241,25 @@ public class Main {
                         break;
                     }
 
-                    Algorithm algorithm = (algo.toLowerCase().equals(GraphManager.BFS_STR)) ?
+                    Algorithm algorithm;
+                    GraphSearchTemplate searchTemplate;
+                    Path path;
+
+                    if(pattern.toLowerCase().equals(GraphManager.TEMPLATE_STR)) {
+                        searchTemplate = algo.toLowerCase().equals(GraphManager.BFS_STR) ?
                                             new BreadthFirstSearch() :
                                             ((algo.toLowerCase().equals(GraphManager.RWS_STR)) ?
-                                                    new RandomWalkSearch() : new DepthFirstSearch());
-                    Path path = graphManager.GraphSearch(srcNode, dstNode, algorithm);
+                                                new RandomWalkSearch() : new DepthFirstSearch());
+                        path = graphManager.GraphSearchTemplate(srcNode, dstNode, searchTemplate);
+                    }
+                    else {
+                        algorithm = (algo.toLowerCase().equals(GraphManager.BFS_STR)) ?
+                                new BreadthFirstSearchStrategy() :
+                                ((algo.toLowerCase().equals(GraphManager.RWS_STR)) ?
+                                        new RandomWalkSearchStrategy() : new DepthFirstSearchStrategy());
+                        path = graphManager.GraphSearchStrategy(srcNode, dstNode, algorithm);
+                    }
+
                     if(path != null) {
                         System.out.print("path = ");
                         List<String> pathArr = path.getPath();

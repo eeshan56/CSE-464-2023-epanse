@@ -5,13 +5,14 @@ import guru.nidi.graphviz.model.LinkTarget;
 import guru.nidi.graphviz.model.MutableNode;
 import javacode.org.example.Path;
 
-import java.nio.channels.MulticastChannel;
 import java.util.*;
 
-public abstract class GraphSearchTemplate implements Algorithm {
+public abstract class GraphSearchTemplate {
     protected abstract Collection<Link> getNeighbors(MutableNode node);
 
     public Path GraphSearch(MutableNode src, MutableNode dst) {
+        String algo = useQueue() ? "Breadth First Search" : "Depth First Search";
+        System.out.println(algo + " via Template Pattern");
         Queue<List<MutableNode>> queue = new LinkedList<>();
         Stack<List<MutableNode>> stack = new Stack<>();
 
@@ -108,6 +109,7 @@ class RandomWalkSearch extends GraphSearchTemplate {
 
     @Override
     public Path GraphSearch(MutableNode src, MutableNode dst) {
+        System.out.println("Random Walk Search via Template Pattern");
         MutableNode current = (MutableNode) src;
         Set<String> visited = new HashSet<>();
         visited.add(current.name().toString());

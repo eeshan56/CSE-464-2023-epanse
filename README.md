@@ -131,11 +131,11 @@ In this feature, I applied the Template pattern to extract common behaviors of B
 
 The GraphSearchTemplate class is the abstract base class that defines the common algorithmic steps for graph search. This class contains a public method graphSearch that defines the template algorithm for graph search. This method takes in a source node, a destination node, and a search algorithm as input parameters.
 
-The BreadthFirstSearch and DepthFirstSearch classes are concrete subclasses of GraphSearchTemplate that implement the specific differences between BFS and DFS. These classes override the graphSearch method and provide their own implementation of the search algorithm.
+The BreadthFirstSearch and DepthFirstSearch classes are concrete subclasses of GraphSearchTemplate that implement the specific differences between BFS and DFS. These classes override the GraphSearchTemplate method and provide their own implementation of the search algorithm.
 
 By using the Template pattern, I was able to extract the common algorithmic steps of graph search and implement the specific differences between BFS and DFS in separate classes. This approach makes the code more modular, easier to read and maintain, and allows us to easily add new search algorithms in the future.
 
-To use these classes, simply create an instance of the BreadthFirstSearch or DepthFirstSearch class, and call the graphSearch method with the appropriate parameters.
+To use these classes, simply create an instance of the BreadthFirstSearch or DepthFirstSearch class, and call the GraphSearch method with the appropriate parameters.
 
 Example Usage
 Here's an example of how to use BreadthFirstSearch and DepthFirstSearch classes to perform a graph search:
@@ -156,11 +156,25 @@ in the GraphSearch method, I applied the strategy pattern. I created an interfac
 Algorithm to define the common behavior of the search algorithms, and the abstract class
 GraphSearchTemplate that implements this interface to define the specific behavior for BFS and DFS, respectively.
 
-The GraphSearch method of GraphManager class was then modified to take an Algorithm
+The GraphSearchStrategy method of GraphManager class was then modified to take an Algorithm
 parameter that determines which algorithm to use, and creates an instance of either
-BreadthFirstSearch or DepthFirstSearch accordingly. This instance is then passed to
-GraphSearchTemplate's search method, which calls the useQueue method to determine whether
-to use a queue or stack, and performs the search accordingly.
+BreadthFirstSearchStrategy or DepthFirstSearchStrategy accordingly. This instance is then passed to
+GraphSearchStrategy's search method, which calls the useQueue method to determine whether
+to use a queue or stack, and performs the search accordingly. Here, we have taken different classes
+GraphSearchTemplate and GraphSearchStrategy to give the user freedom to choose their desired
+design pattern for the execution of the 3 searches (BFS, DFS, Random Walk Search).
+
+Example Usage
+Here's an example of how to use BreadthFirstSearchStrategy and DepthFirstSearchStrategy classes to perform a graph search:
+
+    MutableNode src = new MutableNode("A");
+    MutableNode dst = new MutableNode("D");
+
+    Algorithm bfs = new BreadthFirstSearchStrategy();
+    Path bfsResult = bfs.GraphSearch(src, dst);
+    
+    Algorithm dfs = new DepthFirstSearchStrategy();
+    Path dfsResult = dfs.GraphSearch(src, dst);
 
 #### d) Random Walk Search: [commit link](https://github.com/eeshan56/CSE-464-2023-epanse/commit/e709be9834182f26e6a890f6366b22868850d89e)
 
@@ -181,16 +195,20 @@ Input Graph:
 Results:
 
     Enter the search algorithm(BFS/DFS/Random Walk Search-RWS): rws
+    Enter the desired Design Pattern (Template/Strategy): strategy
     Enter the source node name: a
     Enter the destination node name: h
+    Random Walk Search via Strategy Pattern
     Path traversed: a --> e
-    Path traversed: a --> e --> f
-    Path traversed: a --> e --> f --> h
-    path = a --> e --> f --> h
+    Path traversed: a --> e --> g
+    Path traversed: a --> e --> g --> h
+    path = a --> e --> g --> h
 
     Enter the search algorithm(BFS/DFS/Random Walk Search-RWS): rws
+    Enter the desired Design Pattern (Template/Strategy): template
     Enter the source node name: a
     Enter the destination node name: h
+    Random Walk Search via Template Pattern
     Path traversed: a --> b
     Path traversed: a --> b --> c
     Path traversed: a --> b --> c --> d
@@ -198,7 +216,15 @@ Results:
     Starting from source again...
     Path traversed: a
     Path traversed: a --> e
-    Path traversed: a --> e --> g
-    Path traversed: a --> e --> g --> h
-    path = a --> e --> g --> h
+    Path traversed: a --> e --> f
+    Path traversed: a --> e --> f --> h
+    path = a --> e --> f --> h
+
+[Merge Pull Request link](https://github.com/eeshan56/CSE-464-2023-epanse/commit/72554139b4be861f41d697e855211cad39d97716):
+
+![img.png](readRes/Pull_Request_Screenshot.png)
+
+The pull request was successfully merged into master:
+
+![img.png](readRes/Merge_Master_Screenshot.png)
 

@@ -37,6 +37,8 @@ public class GraphManager {
     public static final String BFS_STR = "bfs";
     public static final String DFS_STR = "dfs";
     public static final String RWS_STR = "rws";
+    public static final String TEMPLATE_STR = "template";
+    public static final String STRATEGY_STR = "strategy";
 
     private MutableGraph graph = null;
     private String dotFilePath = null;
@@ -407,13 +409,24 @@ public class GraphManager {
     }
 
     /**
-     * BFS: Breadth First Search
+     * Search method: Strategy Pattern
      * @param src source node
      * @param dst destination node
      * @return A path instance that shows the path traversed to reach destination node
      */
-    public Path GraphSearch(MutableNode src, MutableNode dst, Algorithm algorithm) {
+    public Path GraphSearchStrategy(MutableNode src, MutableNode dst, Algorithm algorithm) {
         Path result = algorithm.GraphSearch(src, dst);
+        return result;
+    }
+
+    /**
+     * Search method: Template Pattern
+     * @param src source node
+     * @param dst destination node
+     * @return A path instance that shows the path traversed to reach destination node
+     */
+    public Path GraphSearchTemplate(MutableNode src, MutableNode dst, GraphSearchTemplate searchTemplate) {
+        Path result = searchTemplate.GraphSearch(src, dst);
         return result;
     }
 
